@@ -41,7 +41,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                         g2.drawLine(PointCell.cellSizeX, 0, 0, PointCell.cellSizeY);
                         break;
                     case miss:
-                        g2.setColor(new Color(50, 50, 255));
+                        g2.setColor(new Color(80, 50, 255));
                         g2.fillRect(PointCell.cellSizeX*i, PointCell.cellSizeY*j, PointCell.cellSizeX, PointCell.cellSizeY);
                         g2.setColor(Color.RED);
                         g2.fillOval(PointCell.cellSizeX*i + PointCell.cellSizeX/3, PointCell.cellSizeY*j+ PointCell.cellSizeY/3, PointCell.cellSizeX / 2, PointCell.cellSizeY / 2);
@@ -55,7 +55,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                         g2.fillRect(PointCell.cellSizeX*i, PointCell.cellSizeY*j, PointCell.cellSizeX, PointCell.cellSizeY);
                         break;
                     case water:
-                        g2.setColor(new Color(50, 50, 255));
+                        g2.setColor(new Color(80, 50, 255));
                         g2.fillRect(PointCell.cellSizeX*i, PointCell.cellSizeY*j, PointCell.cellSizeX, PointCell.cellSizeY);
                         break;
                     case waterSelected:
@@ -77,23 +77,20 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if ((onCell(e) != null) & (onCell(e).cellState == PointCell.state.water))
-            onCell(e).cellState = PointCell.state.waterSelected;
+        PointCell currentCell = onCell(e);
+        if ((currentCell != null) && ((currentCell.cellState == PointCell.state.water)))
+            currentCell.cellState = PointCell.state.waterSelected;
+        else if ((onCell(e) != null) && (currentCell.cellState == PointCell.state.waterSelected))
+            currentCell.cellState = PointCell.state.water;
         repaint();
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        for (int i = 0; i < 10; i++)
-            for (int j = 0; j < 10; j++) {
-                if (((e.getX() >= i*PointCell.cellSizeX) & (e.getX() <= i*PointCell.cellSizeX+PointCell.cellSizeX)) &
-                        ((e.getY() >= j*PointCell.cellSizeY) & (e.getY() <= j*PointCell.cellSizeY+PointCell.cellSizeY))) {
-                    field[j][i].cellState = PointCell.state.miss;
-                    mouseX = e.getX();
-                    mouseY = e.getY();
-                }
-                repaint();
-            }
+        PointCell currentCell = onCell(e);
+        if ((currentCell != null) && (currentCell.cellState == PointCell.state.waterSelected))
+            currentCell.cellState = PointCell.state.miss;
+        repaint();
     }
 
     @Override

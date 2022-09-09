@@ -12,8 +12,8 @@ public class PointCell {
         shipSelected,
         waterSelected
     }
-    Color cellColor = new Color(0,0,0);
     state cellState;
+    private boolean isSelected = false;
     public static int cellSizeX = 25;
     public static int cellSizeY = 25;
     PointCell(state cellState)
@@ -24,4 +24,6 @@ public class PointCell {
     {
         this.cellState = state;
     }
+    public boolean getSelected() { return isSelected; }
+    public void setSelected(boolean isSelected) { this.isSelected = isSelected;}
 }

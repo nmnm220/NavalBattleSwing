@@ -14,7 +14,6 @@ public class Ship extends JPanel {
         for (int i = 0; i < length; i++)
         {
             shipCells[i] = new PointCell(PointCell.state.ship);
-            add(shipCells[i]);
         }
         this.length = length;
         this.isHorizontal = isHorizontal;

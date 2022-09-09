@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class MainWindow extends JFrame {
     //Ship[] playerShips = new Ship[10];
     ArrayList<Ship> playerShips = new ArrayList<Ship>();
-    PointCell[][] pointCell = new PointCell[10][10];
-    JPanel playerPanel;
+    PointCell[][] playerField = new PointCell[10][10];
+    FieldDrawer playerFieldDrawer;
     Dimension screenResolution = Toolkit.getDefaultToolkit().getScreenSize();
     MainWindow()
     {
@@ -20,22 +20,19 @@ public class MainWindow extends JFrame {
         getContentPane().setBackground(new Color(80, 80, 150));
         Dimension frameSize = this.getSize();
 
-        playerPanel = new JPanel();
-        playerPanel.setLayout(new GridLayout(10, 10, 0, 0));
-        playerPanel.setBackground(Color.PINK);
-        playerPanel.setSize(frameSize.height/2, frameSize.height/2);
-        initField(playerShips, playerPanel);
+        initField(playerShips);
+        playerFieldDrawer = new FieldDrawer(playerField);
+        playerFieldDrawer.setSize(frameSize.height/2, frameSize.height/2);
+        add(playerFieldDrawer);
     }
-    private void initField(ArrayList<Ship> ships, JPanel panel)
+    private void initField(ArrayList<Ship> ships)
     {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                pointCell[i][j] = new PointCell(PointCell.state.water);
-                panel.add(pointCell[i][j]);
+                playerField[i][j] = new PointCell(PointCell.state.water);
             }
         }
-        placeShips(ships);
-        this.add(panel);
+        //placeShips(ships);
     }
     private void placeShips(ArrayList<Ship> ships)
     {
@@ -49,8 +46,6 @@ public class MainWindow extends JFrame {
         ships.add(new Ship(1, true, new Point(6,4)));
         ships.add(new Ship(1, true, new Point(6,6)));
         ships.add(new Ship(1, true, new Point(6,8)));
-        playerPanel.add(ships.get(0));
-        playerPanel.add(ships.get(1));
         /*for (Ship item:
                 ships) {
             for(int i = 0; i < item.getLength(); i++) {

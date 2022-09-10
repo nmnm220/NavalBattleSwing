@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Ship extends JPanel {
+public class Ship {
     int length;
     PointCell[] shipCells;
     boolean isHorizontal;
@@ -9,8 +9,6 @@ public class Ship extends JPanel {
     Ship (int length, boolean isHorizontal, Point position)
     {
         shipCells = new PointCell[length];
-        setLayout(new GridLayout(1, length, 0, 0));
-        setSize(50,50);
         for (int i = 0; i < length; i++)
         {
             shipCells[i] = new PointCell(PointCell.state.ship);
@@ -30,6 +28,11 @@ public class Ship extends JPanel {
     public int getPosY()
     {
         return position.y;
+    }
+    public Point setPosition(Point newPoint)
+    {
+        position = newPoint;
+        return position;
     }
     public int getLength()
     {

@@ -5,7 +5,8 @@ public class Ship {
     int length;
     PointCell[] shipCells;
     boolean isHorizontal;
-    Point position;
+    boolean isSelected;
+    private Point position;
     Ship (int length, boolean isHorizontal, Point position)
     {
         shipCells = new PointCell[length];
@@ -21,18 +22,21 @@ public class Ship {
     {
         isHorizontal = !isHorizontal;
     }
-    public int getPosX()
+    public Point getPosition()
     {
-        return position.x;
+        return position;
     }
-    public int getPosY()
-    {
-        return position.y;
-    }
-    public Point setPosition(Point newPoint)
+    public void setPosition(Point newPoint)
     {
         position = newPoint;
-        return position;
+    }
+    public boolean getSelected()
+    {
+        return isSelected;
+    }
+    public void setSelected(boolean isSelected)
+    {
+        this.isSelected = isSelected;
     }
     public int getLength()
     {

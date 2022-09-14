@@ -46,13 +46,16 @@ public class MainWindow extends JFrame {
         ships.add(new Ship(1, true, new Point(6, 4)));
         ships.add(new Ship(1, true, new Point(6, 6)));
         ships.add(new Ship(1, true, new Point(6, 8)));
+        updateShipPos(ships, playerField);
+    }
+    public static void updateShipPos(ArrayList<Ship> ships, PointCell[][] field) {
         for (Ship item :
                 ships) {
             for (int i = 0; i < item.getLength(); i++) {
                 if (item.isHorizontal)
-                    playerField[item.getPosY()][item.getPosX() + i].setCellState(PointCell.state.ship);
+                    field[item.getPosition().y][item.getPosition().x + i].setCellState(PointCell.state.ship);
                 else
-                    playerField[item.getPosY() + i][item.getPosX()].setCellState(PointCell.state.ship);
+                    field[item.getPosition().y + i][item.getPosition().x].setCellState(PointCell.state.ship);
             }
         }
     }

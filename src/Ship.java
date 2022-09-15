@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.awt.*;
 
 public class Ship {
@@ -7,6 +6,7 @@ public class Ship {
     boolean isHorizontal;
     boolean isSelected;
     private Point position;
+    private Point initPosition;
     Ship (int length, boolean isHorizontal, Point position)
     {
         shipCells = new PointCell[length];
@@ -17,6 +17,7 @@ public class Ship {
         this.length = length;
         this.isHorizontal = isHorizontal;
         this.position = position;
+        initPosition = new Point(position);
     }
     public void turn()
     {
@@ -41,5 +42,13 @@ public class Ship {
     public int getLength()
     {
         return length;
+    }
+    public Point getInitPosition()
+    {
+        return initPosition;
+    }
+    public void setInitPosition(Point position)
+    {
+        initPosition = position;
     }
 }

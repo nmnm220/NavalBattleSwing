@@ -1,5 +1,3 @@
-import com.sun.tools.javac.Main;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -13,6 +11,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     Point prevPos;
     int mouseX;
     int mouseY;
+    int debug = 0;
     boolean shipPlacement = true;
     FieldDrawer(PointCell[][] field, ArrayList<Ship> ships)
     {
@@ -24,7 +23,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     }
     private Point setPosition(Point point, Ship ship)
     {
-        //int coord;
+        if(ship.isHorizontal) {
             if (point.x + ship.getLength() > 10)
                 point.x = 10 - ship.getLength();
             if (point.y >= 10)
@@ -33,6 +32,18 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                 point.x = 0;
             if (point.y <= 0)
                 point.y = 0;
+        }
+        else {
+            if (point.x >= 10)
+                point.x = 10 - ship.getLength();
+            if (point.y + ship.getLength() > 10)
+                point.y = 9;
+            if (point.x <= 0)
+                point.x = 0;
+            if (point.y <= 0)
+                point.y = 0;
+        }
+
         return point;
     }
     private void setCellSelected(MouseEvent e) {
@@ -51,21 +62,6 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                     field[j][i].cellState = PointCell.state.water;
                 }
             }
-
-        /*
-        int x = e.getX() / PointCell.cellSizeX;
-        int y = e.getY() / PointCell.cellSizeY;
-        if ((x < 10) & (y < 10)) {
-            if (field[y][x].cellState == PointCell.state.water) {
-                field[y][x].setSelected(true);
-                field[y][x].cellState = PointCell.state.waterSelected;
-            } else if (field[y][x].cellState == PointCell.state.waterSelected) {
-                field[y][x].setSelected(false);
-                field[y][x].cellState = PointCell.state.water;
-            }
-        }
-
-         */
     }
     private void setShipSelected(MouseEvent e)
     {
@@ -99,31 +95,68 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     }
     private void moveShip(MouseEvent e)
     {
-        for (int i = 0; i < ships.size(); i++)
-        {
-            if (ships.get(i).getSelected()) {
-                prevPos = ships.get(i).getPosition();
+        for (Ship ship : ships) {
+            if (ship.getSelected()) {
+                prevPos = ship.getPosition();
                 Point curPos = new Point(e.getX() / PointCell.cellSizeX, e.getY() / PointCell.cellSizeY);
-                curPos = setPosition(curPos, ships.get(i));
-                if (ships.get(i).isHorizontal)
-                {
-                    for (int j = 0; j < ships.get(i).getLength(); j++)
-                        field[ships.get(i).getPosition().y][ships.get(i).getPosition().x+j].setCellState(PointCell.state.water);
+                curPos = setPosition(curPos, ship);
+                if (ship.isHorizontal) {
+                    for (int j = 0; j < ship.getLength(); j++)
+                        field[ship.getPosition().y][ship.getPosition().x + j].setCellState(PointCell.state.water);
+                } else {
+                    for (int j = 0; j < ship.getLength(); j++)
+                        field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.water);
                 }
-                else
-                {
-                    for (int j = 0; j < ships.get(i).getLength(); j++)
-                        field[ships.get(i).getPosition().y+j][ships.get(i).getPosition().x].setCellState(PointCell.state.water);
-                }
-                ships.get(i).getPosition().translate(curPos.x - prevPos.x, curPos.y - prevPos.y);
+                ship.getPosition().translate(curPos.x - prevPos.x, curPos.y - prevPos.y);
                 prevPos = curPos;
             }
-            MainWindow.updateShipPos(ships, field);
-            repaint();
+//            else if (checkCollision()) {
+//                ships.get(i).setPosition(ships.get(i).getInitPosition());
+//                break;
+//            }
         }
+        MainWindow.updateShipPos(ships, field);
+        repaint();
     }
-    private void checkCollision()
+    private boolean checkCollision()
     {
+        /*
+        for (int i = 0; i < ships.size(); i++)
+            for (int j = 0; j < ships.size(); j++)
+                if ((ships.get(i).isSelected) & (ships.get(i) != ships.get(j)))
+                    if (ships.get(i).isHorizontal) {
+                        if (((ships.get(i).getPosition().x >= ships.get(j).getPosition().x - 1) &
+                                (ships.get(i).getPosition().x <= ships.get(j).getPosition().x + ships.get(j).getLength())) &
+                                ((ships.get(i).getPosition().y >= ships.get(j).getPosition().y - 1) &
+                                        (ships.get(i).getPosition().y <= ships.get(j).getPosition().y + 1)))
+                        {
+                            ships.get(i).setSelected(false);
+                            debug = true;
+                            return ships.get(i);
+                        }
+                    }
+        debug = false;
+        return null;
+
+         */
+        for (Ship ship : ships)
+        {
+            for (int i = -1; i <= 1; i++)
+                for (int j = -1; j < ship.length + 1; j++) {
+                    if (ship.isHorizontal) {
+                        if ((i == 0) & ((j == 0) | (j == ship.length)))
+                            break;
+                        {
+                            if ((ship.getPosition().y + i >= 0) && (ship.getPosition().y + i < 10) &&
+                                    (ship.getPosition().x + j >= 0) && (ship.getPosition().x + j < 10))
+                                if (field[ship.getPosition().y + i][ship.getPosition().x + j].cellState == PointCell.state.ship) {
+                                    return true;
+                                }
+                        }
+                    }
+            }
+        }
+        return false;
     }
     private void setMiss()
     {
@@ -174,7 +207,8 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                 }
                 g2.setColor(Color.BLACK);
                 g2.drawRect(PointCell.cellSizeX*i, PointCell.cellSizeY*j, PointCell.cellSizeX, PointCell.cellSizeY);
-                g2.drawString(String.valueOf(mouseX) + " " + String.valueOf(mouseY),100, 100);
+                //g2.drawString(String.valueOf(mouseX) + " " + String.valueOf(mouseY),100, 100);
+                g2.drawString(String.valueOf(debug),100, 100);
             }
         }
     }
@@ -187,7 +221,6 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     public void mouseMoved(MouseEvent e) {
         if (shipPlacement)
             setShipSelected(e);
-
         else
         {
             setCellSelected(e);
@@ -197,6 +230,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        debug = e.getButton();
         if (!shipPlacement)
             setMiss();
     }
@@ -208,7 +242,15 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        if (checkCollision()) {
+            for (Ship ship : ships) ship.setPosition(new Point(ship.getInitPosition()));
+            MainWindow.updateShipPos(ships, field);
+            repaint();
+        }
+        else
+        {
+            for (Ship ship : ships) ship.setInitPosition(new Point(ship.getPosition()));
+        }
     }
 
     @Override

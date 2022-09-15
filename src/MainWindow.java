@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class MainWindow extends JFrame {
     //Ship[] playerShips = new Ship[10];
-    ArrayList<Ship> playerShips = new ArrayList<Ship>();
+    ArrayList<Ship> playerShips = new ArrayList<>();
     PointCell[][] playerField = new PointCell[10][10];
     FieldDrawer playerFieldDrawer;
     Dimension screenResolution = Toolkit.getDefaultToolkit().getScreenSize();
@@ -49,14 +49,19 @@ public class MainWindow extends JFrame {
         updateShipPos(ships, playerField);
     }
     public static void updateShipPos(ArrayList<Ship> ships, PointCell[][] field) {
-        for (Ship item :
-                ships) {
-            for (int i = 0; i < item.getLength(); i++) {
-                if (item.isHorizontal)
-                    field[item.getPosition().y][item.getPosition().x + i].setCellState(PointCell.state.ship);
+        fillWater(field);
+        for (Ship ship : ships)
+            for (int j = 0; j < ship.getLength(); j++) {
+                if (ships.get(j).isHorizontal)
+                    field[ship.getPosition().y][ship.getPosition().x + j].setCellState(PointCell.state.ship);
                 else
-                    field[item.getPosition().y + i][item.getPosition().x].setCellState(PointCell.state.ship);
+                    field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.ship);
             }
-        }
+    }
+    public static void fillWater(PointCell[][] field)
+    {
+        for (int i = 0; i < 10; i++)
+            for (int j = 0; j < 10; j++)
+                field[j][i].setCellState(PointCell.state.water);
     }
 }

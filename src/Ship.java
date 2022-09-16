@@ -21,7 +21,8 @@ public class Ship {
     }
     public void turn()
     {
-        isHorizontal = !isHorizontal;
+        if (length > 1)
+            isHorizontal = !isHorizontal;
     }
     public Point getPosition()
     {

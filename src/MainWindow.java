@@ -21,7 +21,7 @@ public class MainWindow extends JFrame {
         Dimension frameSize = this.getSize();
 
         initField(playerShips);
-        playerFieldDrawer = new FieldDrawer(playerField, playerShips);
+        playerFieldDrawer = new FieldDrawer(playerField, playerShips, 0, 0);
         playerFieldDrawer.setSize(frameSize.height / 2, frameSize.height / 2);
         add(playerFieldDrawer);
     }
@@ -52,7 +52,7 @@ public class MainWindow extends JFrame {
         fillWater(field);
         for (Ship ship : ships)
             for (int j = 0; j < ship.getLength(); j++) {
-                if (ships.get(j).isHorizontal)
+                if (ship.isHorizontal)
                     field[ship.getPosition().y][ship.getPosition().x + j].setCellState(PointCell.state.ship);
                 else
                     field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.ship);

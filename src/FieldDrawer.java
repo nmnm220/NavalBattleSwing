@@ -6,24 +6,26 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 public class FieldDrawer extends JPanel implements MouseMotionListener, MouseListener {
-    PointCell[][] field;
-    ArrayList<Ship> ships;
-    Point prevPos;
-    int mouseX;
-    int mouseY;
+    private PointCell[][] field;
+    private ArrayList<Ship> ships;
+    private Point prevPos;
+    private int drawingOffsetX = 0;
+    private int drawingOffsetY = 0;
     int debug = 0;
     boolean shipPlacement = true;
-    FieldDrawer(PointCell[][] field, ArrayList<Ship> ships)
-    {
+
+    FieldDrawer(PointCell[][] field, ArrayList<Ship> ships, int offsetX, int offsetY) {
         addMouseMotionListener(this);
         addMouseListener(this);
+        drawingOffsetY = offsetX;
+        drawingOffsetY = offsetY;
         this.field = field;
         this.ships = ships;
         setBackground(Color.PINK);
     }
-    private Point setPosition(Point point, Ship ship)
-    {
-        if(ship.isHorizontal) {
+
+    private Point setPosition(Point point, Ship ship) {
+        if (ship.isHorizontal) {
             if (point.x + ship.getLength() > 10)
                 point.x = 10 - ship.getLength();
             if (point.y >= 10)
@@ -32,20 +34,20 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                 point.x = 0;
             if (point.y <= 0)
                 point.y = 0;
-        }
-        else {
-            if (point.x >= 10)
-                point.x = 10 - ship.getLength();
+        } else {
             if (point.y + ship.getLength() > 10)
-                point.y = 9;
-            if (point.x <= 0)
-                point.x = 0;
+                point.y = 10 - ship.getLength();
+            if (point.x >= 10)
+                point.x = 9;
             if (point.y <= 0)
                 point.y = 0;
+            if (point.x <= 0)
+                point.x = 0;
         }
 
         return point;
     }
+
     private void setCellSelected(MouseEvent e) {
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++) {
@@ -55,46 +57,57 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                         field[j][i].setSelected(true);
                         field[j][i].cellState = PointCell.state.waterSelected;
                     }
-                }
-                else if (field[j][i].cellState == PointCell.state.waterSelected)
-                {
+                } else if (field[j][i].cellState == PointCell.state.waterSelected) {
                     field[j][i].setSelected(false);
                     field[j][i].cellState = PointCell.state.water;
                 }
             }
     }
-    private void setShipSelected(MouseEvent e)
-    {
-        for (Ship item:
-             ships) {
-            if ((item.isHorizontal) && ((((e.getX() / PointCell.cellSizeX)  >= item.getPosition().x)
-                    && (e.getX() / PointCell.cellSizeX)  < item.getPosition().x+ item.getLength()))
-                    && ((e.getY() / PointCell.cellSizeY)  == item.getPosition().y))
-            {
-                for (int i = 0; i < item.length; i++) {
-                    field[item.getPosition().y][item.getPosition().x + i].cellState = PointCell.state.shipSelected;
-                    item.setSelected(true);
+
+    private void setShipSelected(MouseEvent e) {
+        for (Ship ship :
+                ships) {
+            if (((((e.getX() / PointCell.cellSizeX) >= ship.getPosition().x)
+                    && (e.getX() / PointCell.cellSizeX) < ship.getPosition().x + ship.getLength()))
+                    && ((e.getY() / PointCell.cellSizeY) == ship.getPosition().y)) {
+                if (ship.isHorizontal) {
+                    for (int i = 0; i < ship.length; i++) {
+                        field[ship.getPosition().y][ship.getPosition().x + i].cellState = PointCell.state.shipSelected;
+                        ship.setSelected(true);
+                    }
+                } else {
+                    for (int i = 0; i < ship.length; i++) {
+                        field[ship.getPosition().y + i][ship.getPosition().x].cellState = PointCell.state.shipSelected;
+                        ship.setSelected(true);
+                    }
                 }
-            }
-            else if ((!item.isHorizontal) && ((((e.getX() / PointCell.cellSizeY)  >= item.getPosition().y)
-                    && (e.getX() / PointCell.cellSizeY)  < item.getPosition().y+ item.getLength()))
-                    && ((e.getY() / PointCell.cellSizeX)  == item.getPosition().x))
-            {
-                for (int i = 0; i < item.length; i++) {
-                    field[item.getPosition().y + i][item.getPosition().x].cellState = PointCell.state.shipSelected;
-                    item.setSelected(true);
-                }
-            }
-            else {
-                for (int i = 0; i < item.length; i++) {
-                    field[item.getPosition().y][item.getPosition().x + i].cellState = PointCell.state.ship;
-                    item.setSelected(false);
+            } else {
+                for (int i = 0; i < ship.length; i++) {
+                    if (ship.isHorizontal) {
+                        field[ship.getPosition().y][ship.getPosition().x + i].cellState = PointCell.state.ship;
+                        ship.setSelected(false);
+                    } else {
+                        field[ship.getPosition().y + i][ship.getPosition().x].cellState = PointCell.state.ship;
+                        ship.setSelected(false);
+                    }
                 }
             }
         }
     }
-    private void moveShip(MouseEvent e)
-    {
+
+    private void turnShip() {
+        for (Ship ship : ships) {
+            if (ship.getSelected() & (ship.getPosition().x + ship.getLength() <= 10) & (ship.getPosition().y + ship.getLength() <= 10)) {
+                ship.turn();
+            }
+        }
+        MainWindow.updateShipPos(ships, field);
+        repaint();
+        if (checkCollision())
+            turnShip();
+    }
+
+    private void moveShip(MouseEvent e) {
         for (Ship ship : ships) {
             if (ship.getSelected()) {
                 prevPos = ship.getPosition();
@@ -110,37 +123,13 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                 ship.getPosition().translate(curPos.x - prevPos.x, curPos.y - prevPos.y);
                 prevPos = curPos;
             }
-//            else if (checkCollision()) {
-//                ships.get(i).setPosition(ships.get(i).getInitPosition());
-//                break;
-//            }
         }
         MainWindow.updateShipPos(ships, field);
         repaint();
     }
-    private boolean checkCollision()
-    {
-        /*
-        for (int i = 0; i < ships.size(); i++)
-            for (int j = 0; j < ships.size(); j++)
-                if ((ships.get(i).isSelected) & (ships.get(i) != ships.get(j)))
-                    if (ships.get(i).isHorizontal) {
-                        if (((ships.get(i).getPosition().x >= ships.get(j).getPosition().x - 1) &
-                                (ships.get(i).getPosition().x <= ships.get(j).getPosition().x + ships.get(j).getLength())) &
-                                ((ships.get(i).getPosition().y >= ships.get(j).getPosition().y - 1) &
-                                        (ships.get(i).getPosition().y <= ships.get(j).getPosition().y + 1)))
-                        {
-                            ships.get(i).setSelected(false);
-                            debug = true;
-                            return ships.get(i);
-                        }
-                    }
-        debug = false;
-        return null;
 
-         */
-        for (Ship ship : ships)
-        {
+    private boolean checkCollision() {
+        for (Ship ship : ships) {
             for (int i = -1; i <= 1; i++)
                 for (int j = -1; j < ship.length + 1; j++) {
                     if (ship.isHorizontal) {
@@ -154,15 +143,14 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                                 }
                         }
                     }
-            }
+                }
         }
         return false;
     }
-    private void setMiss()
-    {
+
+    private void setMiss() {
         for (int i = 0; i < 10; i++)
-            for (int j = 0; j < 10; j++)
-            {
+            for (int j = 0; j < 10; j++) {
                 if (field[j][i].getSelected())
                     field[j][i].cellState = PointCell.state.miss;
             }
@@ -171,7 +159,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 switch (field[j][i].cellState) {
@@ -206,9 +194,9 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                     }
                 }
                 g2.setColor(Color.BLACK);
-                g2.drawRect(PointCell.cellSizeX*i, PointCell.cellSizeY*j, PointCell.cellSizeX, PointCell.cellSizeY);
+                g2.drawRect(PointCell.cellSizeX * i, PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                 //g2.drawString(String.valueOf(mouseX) + " " + String.valueOf(mouseY),100, 100);
-                g2.drawString(String.valueOf(debug),100, 100);
+                g2.drawString(String.valueOf(debug), 100, 100);
             }
         }
     }
@@ -217,12 +205,12 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     public void mouseDragged(MouseEvent e) {
         moveShip(e);
     }
+
     @Override
     public void mouseMoved(MouseEvent e) {
         if (shipPlacement)
             setShipSelected(e);
-        else
-        {
+        else {
             setCellSelected(e);
         }
         repaint();
@@ -230,9 +218,14 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        debug = e.getButton();
+        if (e.getButton() == 3) {
+            turnShip();
+            MainWindow.updateShipPos(ships, field);
+            debug = e.getButton();
+        }
         if (!shipPlacement)
             setMiss();
+        repaint();
     }
 
     @Override
@@ -246,9 +239,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
             for (Ship ship : ships) ship.setPosition(new Point(ship.getInitPosition()));
             MainWindow.updateShipPos(ships, field);
             repaint();
-        }
-        else
-        {
+        } else {
             for (Ship ship : ships) ship.setInitPosition(new Point(ship.getPosition()));
         }
     }

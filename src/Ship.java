@@ -5,6 +5,7 @@ public class Ship {
     PointCell[] shipCells;
     boolean isHorizontal;
     boolean isSelected;
+    private boolean isPlaced = false;
     private Point position;
     private Point initPosition;
     Ship (int length, boolean isHorizontal, Point position)
@@ -51,5 +52,12 @@ public class Ship {
     public void setInitPosition(Point position)
     {
         initPosition = position;
+    }
+    public void setPlaced() {
+        isPlaced = true;
+    }
+    public boolean getPlaced()
+    {
+        return isPlaced;
     }
 }

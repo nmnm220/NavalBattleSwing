@@ -25,10 +25,10 @@ public class MainWindow extends JFrame {
         playerFieldDrawer.setSize(frameSize.height / 2, frameSize.height / 2);
         add(playerFieldDrawer);
 
-        ShipSelector shipSelector = new ShipSelector();
-        shipSelector.setSize(frameSize.height / 4, frameSize.width / 5);
-        shipSelector.initButtons();
-        shipSelector.setLocation(PointCell.cellSizeX * 11,0);
+        ShipSelector shipSelector = new ShipSelector(playerShips);
+        shipSelector.setSize(frameSize.width / 5, frameSize.height / 2);
+        shipSelector.initUI();
+        shipSelector.setLocation(PointCell.cellSizeX * 11, 0);
         add(shipSelector);
     }
 
@@ -54,18 +54,20 @@ public class MainWindow extends JFrame {
         ships.add(new Ship(1, true, new Point(6, 8)));
         updateShipPos(ships, playerField);
     }
+
     public static void updateShipPos(ArrayList<Ship> ships, PointCell[][] field) {
         fillWater(field);
         for (Ship ship : ships)
-            for (int j = 0; j < ship.getLength(); j++) {
-                if (ship.isHorizontal)
-                    field[ship.getPosition().y][ship.getPosition().x + j].setCellState(PointCell.state.ship);
-                else
-                    field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.ship);
+            if (ship.getPlaced())
+                for (int j = 0; j < ship.getLength(); j++) {
+                    if (ship.isHorizontal)
+                        field[ship.getPosition().y][ship.getPosition().x + j].setCellState(PointCell.state.ship);
+                    else
+                        field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.ship);
             }
     }
-    public static void fillWater(PointCell[][] field)
-    {
+
+    public static void fillWater(PointCell[][] field) {
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++)
                 field[j][i].setCellState(PointCell.state.water);

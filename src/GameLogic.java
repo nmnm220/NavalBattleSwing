@@ -2,12 +2,11 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+/*
+Game logic
+ */
 public class GameLogic {
-    GameLogic()
-    {
-
-    }
-    static Point setPosition(Point point, Ship ship) {
+    static Point setPosition(Point point, Ship ship) { //sets position of all ships
         if (ship.isHorizontal) {
             if (point.x + ship.getLength() > 10)
                 point.x = 10 - ship.getLength();
@@ -31,7 +30,7 @@ public class GameLogic {
         return point;
     }
 
-    static void setCellSelected(MouseEvent e, PointCell[][] field) {
+    static void setCellSelected(MouseEvent e, PointCell[][] field) { //sets cell selected when selecting single cell
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++) {
                 if (((e.getX() >= i * PointCell.cellSizeX) & (e.getX() <= i * PointCell.cellSizeX + PointCell.cellSizeX)) &
@@ -47,7 +46,7 @@ public class GameLogic {
             }
     }
 
-    static void setShipSelected(MouseEvent e, ArrayList<Ship> ships, PointCell[][] field) {
+    static void setShipSelected(MouseEvent e, ArrayList<Ship> ships, PointCell[][] field) { //sets all cells of the ship selected when mouse is on the ship
         for (Ship ship :
                 ships) {
             if (((((e.getX() / PointCell.cellSizeX) >= ship.getPosition().x)
@@ -78,7 +77,7 @@ public class GameLogic {
         }
     }
 
-    static void turnShip(ArrayList<Ship> ships, PointCell[][] field) {
+    static void turnShip(ArrayList<Ship> ships, PointCell[][] field) { //turns the ships not letting it go out of array index
         for (Ship ship : ships) {
             if (ship.getSelected() & (ship.getPosition().x + ship.getLength() <= 10) & (ship.getPosition().y + ship.getLength() <= 10)) {
                 ship.turn();
@@ -111,7 +110,7 @@ public class GameLogic {
         //repaint();
     }
 
-    static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) {
+    static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) { //returns true if any ship on the field is too close to another else returns false
         for (Ship ship : ships) {
             for (int i = -1; i <= 1; i++)
                 for (int j = -1; j < ship.length + 1; j++) {
@@ -131,7 +130,7 @@ public class GameLogic {
         return false;
     }
 
-    static void setMiss(PointCell[][] field) {
+    static void setMiss(PointCell[][] field) { //sets selected cell state to "miss"
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++) {
                 if (field[j][i].getSelected())

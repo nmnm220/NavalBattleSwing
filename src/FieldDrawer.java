@@ -17,7 +17,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     FieldDrawer(PointCell[][] field, ArrayList<Ship> ships, int offsetX, int offsetY) {
         addMouseMotionListener(this);
         addMouseListener(this);
-        drawingOffsetY = offsetX;
+        drawingOffsetX = offsetX; //offset used to move field
         drawingOffsetY = offsetY;
         this.field = field;
         this.ships = ships;
@@ -40,30 +40,29 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                     }
                     case miss -> {
                         g2.setColor(new Color(80, 50, 255));
-                        g2.fillRect(PointCell.cellSizeX * i, PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
+                        g2.fillRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                         g2.setColor(Color.RED);
                         g2.fillOval(PointCell.cellSizeX * i + PointCell.cellSizeX / 3, PointCell.cellSizeY * j + PointCell.cellSizeY / 3, PointCell.cellSizeX / 2, PointCell.cellSizeY / 2);
                     }
                     case ship -> {
                         g2.setColor(Color.GRAY);
-                        g2.fillRect(PointCell.cellSizeX * i, PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
+                        g2.fillRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                     }
                     case shipSelected -> {
                         g2.setColor(Color.LIGHT_GRAY);
-                        g2.fillRect(PointCell.cellSizeX * i, PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
+                        g2.fillRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                     }
                     case water -> {
                         g2.setColor(new Color(80, 50, 255));
-                        g2.fillRect(PointCell.cellSizeX * i, PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
+                        g2.fillRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                     }
                     case waterSelected -> {
                         g2.setColor(new Color(100, 100, 255));
-                        g2.fillRect(PointCell.cellSizeX * i, PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
+                        g2.fillRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                     }
                 }
                 g2.setColor(Color.BLACK);
-                g2.drawRect(PointCell.cellSizeX * i, PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
-                //g2.drawString(String.valueOf(mouseX) + " " + String.valueOf(mouseY),100, 100);
+                g2.drawRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                 g2.drawString(String.valueOf(debug), 100, 100);
             }
         }

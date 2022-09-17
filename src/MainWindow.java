@@ -11,7 +11,7 @@ public class MainWindow extends JFrame {
     Dimension screenResolution = Toolkit.getDefaultToolkit().getScreenSize();
 
     MainWindow() {
-        setTitle("Морской бой");
+        setTitle("Naval Battle");
         setSize(screenResolution.width / 2, screenResolution.height / 2);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -24,6 +24,12 @@ public class MainWindow extends JFrame {
         playerFieldDrawer = new FieldDrawer(playerField, playerShips, 0, 0);
         playerFieldDrawer.setSize(frameSize.height / 2, frameSize.height / 2);
         add(playerFieldDrawer);
+
+        ShipSelector shipSelector = new ShipSelector();
+        shipSelector.setSize(frameSize.height / 4, frameSize.width / 5);
+        shipSelector.initButtons();
+        shipSelector.setLocation(PointCell.cellSizeX * 11,0);
+        add(shipSelector);
     }
 
     private void initField(ArrayList<Ship> ships) {

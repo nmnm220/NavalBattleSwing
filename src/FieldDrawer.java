@@ -24,6 +24,10 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
         setBackground(Color.PINK);
     }
 
+    public void outSideRepaint()
+    {
+        repaint();
+    }
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -76,7 +80,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (shipPlacement)
+       if (shipPlacement)
             GameLogic.setShipSelected(e, ships, field);
         else {
             GameLogic.setCellSelected(e, field);
@@ -88,7 +92,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == 3) {
             GameLogic.turnShip(ships, field);
-            MainWindow.updateShipPos(ships, field);
+            MainWindow.updateShipsPos(ships, field);
             debug = e.getButton();
         }
         if (!shipPlacement)
@@ -105,7 +109,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     public void mouseReleased(MouseEvent e) {
         if (GameLogic.checkCollision(ships, field)) {
             for (Ship ship : ships) ship.setPosition(new Point(ship.getInitPosition()));
-            MainWindow.updateShipPos(ships, field);
+            MainWindow.updateShipsPos(ships, field);
             repaint();
         } else {
             for (Ship ship : ships) ship.setInitPosition(new Point(ship.getPosition()));

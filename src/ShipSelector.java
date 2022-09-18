@@ -1,3 +1,5 @@
+import com.sun.tools.javac.Main;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,11 +11,17 @@ public class ShipSelector extends JPanel implements ActionListener {
     private final JButton placeShipButton = new JButton("Place Ship");
     private final JButton resetButton = new JButton("Reset");
     private ShipDrawer shipDrawer;
+    ArrayList<Ship> shipsPool;
     ArrayList<Ship> ships;
+    PointCell[][] field;
+    FieldDrawer fieldDrawer;
     private int shipNum = 0;
-    ShipSelector(ArrayList<Ship> ships)
+    ShipSelector(ArrayList<Ship> shipsPool, ArrayList<Ship> ships, PointCell[][] field, FieldDrawer fieldDrawer)
     {
+        this.shipsPool = shipsPool;
         this.ships = ships;
+        this.field = field;
+        this.fieldDrawer = fieldDrawer;
     }
     public void initUI()
     {
@@ -45,7 +53,7 @@ public class ShipSelector extends JPanel implements ActionListener {
         placeShipButton.setActionCommand("place");
         resetButton.setActionCommand("reset");
 
-        shipDrawer = new ShipDrawer(ships.get(0), shipNum);
+        shipDrawer = new ShipDrawer(shipsPool.get(0), shipNum);
         shipDrawer.setSize(size.height/2,size.height/3);
         shipDrawer.setLocation(size.width/2 - shipDrawer.getSize().width/2, size.height/8);
         add(shipDrawer);
@@ -57,8 +65,8 @@ public class ShipSelector extends JPanel implements ActionListener {
             shipNum = 0;
         else if (shipNum < 0)
             shipNum = 9;
-        if (!ships.get(shipNum).getPlaced())
-            shipDrawer.drawShip(ships.get(shipNum), shipNum);
+        if (!shipsPool.get(shipNum).getPlaced())
+            shipDrawer.drawShip(shipsPool.get(shipNum), shipNum);
     }
     public void previousShip()
     {
@@ -67,12 +75,15 @@ public class ShipSelector extends JPanel implements ActionListener {
             shipNum = 0;
         else if (shipNum < 0)
             shipNum = 9;
-        if (!ships.get(shipNum).getPlaced())
-            shipDrawer.drawShip(ships.get(shipNum), shipNum);
+        if (!shipsPool.get(shipNum).getPlaced())
+            shipDrawer.drawShip(shipsPool.get(shipNum), shipNum);
     }
     public void placeShip()
     {
-        ships.get(shipNum).setPlaced();
+        shipsPool.get(shipNum).setPlaced();
+        MainWindow.newShip(shipsPool.get(shipNum), ships, field);
+        MainWindow.updateShipsPos(ships, field);
+        fieldDrawer.repaint();
     }
     public void reset()
     {

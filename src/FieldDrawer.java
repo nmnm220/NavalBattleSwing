@@ -14,14 +14,13 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     int debug = 0;
     boolean shipPlacement = true;
 
-    FieldDrawer(PointCell[][] field, ArrayList<Ship> ships, int offsetX, int offsetY) {
+    FieldDrawer(PointCell[][] field, ArrayList<Ship> ships) {
         addMouseMotionListener(this);
         addMouseListener(this);
-        drawingOffsetX = offsetX; //offset used to move field
-        drawingOffsetY = offsetY;
         this.field = field;
         this.ships = ships;
         setBackground(Color.PINK);
+        setSize(10 * PointCell.cellSizeX, 10 * PointCell.cellSizeX);
     }
 
 

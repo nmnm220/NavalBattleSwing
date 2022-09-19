@@ -3,6 +3,8 @@ public class NavalBattle {
     {
         javax.swing.SwingUtilities.invokeLater(() -> {
             MainWindow mainWindow = new MainWindow();
+            if (!mainWindow.shipPlacement)
+                mainWindow.startGame();
         });
 
 

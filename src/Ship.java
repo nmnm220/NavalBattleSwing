@@ -10,11 +10,6 @@ public class Ship {
     private Point initPosition;
     Ship (int length, boolean isHorizontal, Point position)
     {
-        shipCells = new PointCell[length];
-        for (int i = 0; i < length; i++)
-        {
-            shipCells[i] = new PointCell(PointCell.state.ship);
-        }
         this.length = length;
         this.isHorizontal = isHorizontal;
         this.position = position;

@@ -11,8 +11,8 @@ public class PointCell {
     }
     state cellState;
     private boolean isSelected = false;
-    public static int cellSizeX = 25;
-    public static int cellSizeY = 25;
+    public static int cellSizeX = 30;
+    public static int cellSizeY = 30;
     PointCell(state cellState)
     {
         this.cellState = cellState;

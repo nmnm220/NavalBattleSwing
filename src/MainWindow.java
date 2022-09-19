@@ -1,15 +1,24 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Random;
 
 
 public class MainWindow extends JFrame {
     //Ship[] playerShips = new Ship[10];
+    static boolean shipPlacement = true;
     ArrayList<Ship> playerShips = new ArrayList<>();
+    ArrayList<Ship> enemyShips = new ArrayList<>();
     ArrayList<Ship> playerShipsPool = new ArrayList<>();
     PointCell[][] playerField = new PointCell[10][10];
+    PointCell[][] enemyField = new PointCell[10][10];
     FieldDrawer playerFieldDrawer;
+    FieldDrawer enemyFieldDrawer;
+    ShipSelector shipSelector;
     Dimension screenResolution = Toolkit.getDefaultToolkit().getScreenSize();
 
     MainWindow() {
@@ -22,39 +31,47 @@ public class MainWindow extends JFrame {
         getContentPane().setBackground(new Color(80, 80, 150));
         Dimension frameSize = this.getSize();
 
-        initField(playerShipsPool);
-        playerFieldDrawer = new FieldDrawer(playerField, playerShips, 0, 0);
-        playerFieldDrawer.setSize(frameSize.height / 2, frameSize.height / 2);
+        initField(playerShipsPool, playerField);
+        playerFieldDrawer = new FieldDrawer(playerField, playerShips);
+        //playerFieldDrawer.setSize(10 * PointCell.cellSizeX, 10 * PointCell.cellSizeX);
         add(playerFieldDrawer);
 
-        ShipSelector shipSelector = new ShipSelector(playerShipsPool, playerShips, playerField, playerFieldDrawer);
-        shipSelector.setSize(frameSize.width / 5, frameSize.height / 2);
+        shipSelector = new ShipSelector(playerShipsPool, playerShips, playerField, playerFieldDrawer);
+        shipSelector.setSize(frameSize.width / 5, playerFieldDrawer.getHeight());
         shipSelector.initUI();
-        shipSelector.setLocation(PointCell.cellSizeX * 11, 0);
+        shipSelector.setLocation(PointCell.cellSizeX * 10, 0);
         add(shipSelector);
     }
+    public void startGame()
+    {
+        remove(shipSelector);
+        initField(enemyShips, enemyField);
+        enemyFieldDrawer = new FieldDrawer(enemyField, enemyShips);
+        enemyFieldDrawer.setLocation(PointCell.cellSizeX * 10, 0);
+        add(enemyFieldDrawer);
+    }
 
-    private void initField(ArrayList<Ship> ships) {
+    private void initField(ArrayList<Ship> ships, PointCell[][] field) {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                playerField[i][j] = new PointCell(PointCell.state.water);
+                field[i][j] = new PointCell(PointCell.state.water);
             }
         }
         fillPool(ships);
     }
 
     private void fillPool(ArrayList<Ship> ships) {
-        ships.add(new Ship(4, true, new Point(0, 0)));
-        ships.add(new Ship(3, true, new Point(0, 2)));
-        ships.add(new Ship(3, true, new Point(0, 4)));
-        ships.add(new Ship(2, true, new Point(0, 6)));
-        ships.add(new Ship(2, true, new Point(0, 8)));
-        ships.add(new Ship(2, true, new Point(6, 0)));
-        ships.add(new Ship(1, true, new Point(6, 2)));
-        ships.add(new Ship(1, true, new Point(6, 4)));
-        ships.add(new Ship(1, true, new Point(6, 6)));
-        ships.add(new Ship(1, true, new Point(6, 8)));
-        //updateShipsPos(ships, playerField);
+        Point p = new Point();
+        ships.add(new Ship(4, true, p));
+        ships.add(new Ship(3, true, p));
+        ships.add(new Ship(3, true, p));
+        ships.add(new Ship(2, true, p));
+        ships.add(new Ship(2, true, p));
+        ships.add(new Ship(2, true, p));
+        ships.add(new Ship(1, true, p));
+        ships.add(new Ship(1, true, p));
+        ships.add(new Ship(1, true, p));
+        ships.add(new Ship(1, true, p));
     }
 
     static void newShip(Ship ship, ArrayList<Ship> ships, PointCell[][] field) {

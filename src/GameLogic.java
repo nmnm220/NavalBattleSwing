@@ -137,24 +137,38 @@ public class GameLogic {
         return false;
     }*/
     static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) {
+        int allShpLength = 0;
+        int curShpLength = 0;
         for (Ship ship : ships) {
             int pX = ship.getPosition().x;
             int pY = ship.getPosition().y;
             int length = ship.getLength();
+            int ctr = 0;
+            allShpLength += length;
             for (int i = -1; i <= 1; i++) {
-                int ctr = 0;
-                for (int j = -1; j < length; j++) {
-                    if ((pX + j >= 10) | (pX + j < 0) | (pY + j >= 10) | (pY + j < 0))
-                        break;
+                for (int j = -1; j <= length; j++) {
                     if (ship.isHorizontal) {
-                        if (field[pY + i][pX + j].cellState == PointCell.state.ship)
-                            ctr++;
-                        if (ctr >= length)
-                            return true;
+                        if (!((pX + j >= 10) || (pX + j < 0) || (pY + i >= 10) || (pY + i < 0)))
+                            if (field[pY + i][pX + j].cellState == PointCell.state.ship) {
+                                ctr++;
+                            }
+                    } else {
+                        if (!((pX + i >= 10) || (pX + i < 0) || (pY + j >= 10) || (pY + j < 0)))
+                            if (field[pY + j][pX + i].cellState == PointCell.state.ship) {
+                                ctr++;
+                            }
                     }
                 }
+                if (ctr > length)
+                    return true;
             }
         }
+        for (int i = 0; i < field.length; i++)
+            for (int j = 0; j < field.length; j++)
+                if (field[j][i].cellState == PointCell.state.ship)
+                    curShpLength++;
+        if (curShpLength < allShpLength)
+            return true;
         return false;
 
     }
@@ -165,13 +179,5 @@ public class GameLogic {
                 if (field[j][i].getSelected())
                     field[j][i].cellState = PointCell.state.miss;
             }
-    }
-
-    static int coordSet(int input) {
-        if (input >= 10)
-            input = 9;
-        else if (input < 0)
-            input = 0;
-        return input;
     }
 }

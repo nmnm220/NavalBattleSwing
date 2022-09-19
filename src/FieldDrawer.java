@@ -24,10 +24,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
         setBackground(Color.PINK);
     }
 
-    public void outSideRepaint()
-    {
-        repaint();
-    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);

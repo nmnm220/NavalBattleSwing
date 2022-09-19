@@ -6,7 +6,6 @@ import java.util.Random;
 
 public class MainWindow extends JFrame {
     //Ship[] playerShips = new Ship[10];
-    Timer timer;
     ArrayList<Ship> playerShips = new ArrayList<>();
     ArrayList<Ship> playerShipsPool = new ArrayList<>();
     PointCell[][] playerField = new PointCell[10][10];
@@ -62,12 +61,11 @@ public class MainWindow extends JFrame {
         Random random = new Random();
         int rndX = random.nextInt(9);
         int rndY = random.nextInt(9);
-        ;
         boolean turn = random.nextBoolean();
         ship = new Ship(ship.getLength(), turn, new Point(rndX, rndY));
         ships.add(ship);
         ship.setPlaced();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1000; i++) {
             if (GameLogic.checkCollision(ships, field)) {
                 rndX = random.nextInt(9);
                 rndY = random.nextInt(9);

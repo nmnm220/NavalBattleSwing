@@ -1,5 +1,3 @@
-import com.sun.tools.javac.Main;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -84,8 +82,9 @@ public class ShipSelector extends JPanel implements ActionListener {
         MainWindow.newShip(shipsPool.get(shipNum), ships, field);
         MainWindow.updateShipsPos(ships, field);
         fieldDrawer.repaint();
+        nextShip();
     }
-    public void reset()
+    public void resetShips()
     {
 
     }
@@ -96,7 +95,7 @@ public class ShipSelector extends JPanel implements ActionListener {
             case "next" -> nextShip();
             case "prev" -> previousShip();
             case "place" -> placeShip();
-            case "reset" -> reset();
+            case "reset" -> resetShips();
         }
     }
 }

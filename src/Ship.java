@@ -56,6 +56,7 @@ public class Ship {
     public void setPlaced() {
         isPlaced = true;
     }
+    public void reset(){isPlaced = false;}
     public boolean getPlaced()
     {
         return isPlaced;

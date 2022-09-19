@@ -20,8 +20,10 @@ public class ShipDrawer extends JPanel {
                 g2.setColor(Color.BLACK);
                 g2.drawRect(PointCell.cellSizeX * i, PointCell.cellSizeY, PointCell.cellSizeX, PointCell.cellSizeY);
             }
-            g2.drawString("Ship: " + String.valueOf(shipNum), PointCell.cellSizeX, PointCell.cellSizeY * 3);
+            g2.drawString("Ship: " + shipNum, PointCell.cellSizeX, PointCell.cellSizeY * 3);
         }
+        else
+            g2.drawString("All ships are placed", PointCell.cellSizeX, PointCell.cellSizeY * 3);
     }
     public void drawShip(Ship ship, int shipNum)
     {

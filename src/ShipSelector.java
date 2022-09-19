@@ -82,11 +82,33 @@ public class ShipSelector extends JPanel implements ActionListener {
         MainWindow.newShip(shipsPool.get(shipNum), ships, field);
         MainWindow.updateShipsPos(ships, field);
         fieldDrawer.repaint();
+        int ctr = 0;
+        for (Ship ship: shipsPool)
+        {
+            if (ship.getPlaced())
+                ctr++;
+            if (shipsPool.size() == ctr) {
+                shipDrawer.drawShip(null, 0);
+                repaint();
+                return;
+            }
+        }
         nextShip();
     }
     public void resetShips()
     {
-
+        for (Ship ship: shipsPool)
+        {
+            ship.reset();
+        }
+        for (Ship ship: ships)
+        {
+            ship.reset();
+        }
+        nextShip();
+        MainWindow.removeShips(ships);
+        MainWindow.updateShipsPos(ships, field);
+        fieldDrawer.repaint();
     }
 
     @Override

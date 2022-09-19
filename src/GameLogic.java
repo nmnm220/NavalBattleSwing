@@ -103,14 +103,14 @@ public class GameLogic {
                         field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.water);
                 }
                 ship.getPosition().translate(curPos.x - prevPos.x, curPos.y - prevPos.y);
-                prevPos = curPos;
+                //prevPos = curPos;
             }
         }
         MainWindow.updateShipsPos(ships, field);
         //repaint();
     }
 
-    /*static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) { //returns true if any ship on the field is too close to another else returns false
+    /*static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) {
         for (Ship ship : ships)
             for (int i = -1; i <= 1; i++)
                 for (int j = -1; j <= ship.getLength(); j++) {
@@ -136,7 +136,7 @@ public class GameLogic {
                 }
         return false;
     }*/
-    static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) {
+    static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) { //returns true if any ship on the field is too close to another else returns false
         int allShpLength = 0;
         int curShpLength = 0;
         for (Ship ship : ships) {

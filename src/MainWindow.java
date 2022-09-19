@@ -89,6 +89,10 @@ public class MainWindow extends JFrame {
                         field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.ship);
                 }
     }
+    public static void removeShips(ArrayList<Ship> ships)
+    {
+            ships.removeAll(ships);
+    }
 
     public static void fillWater(PointCell[][] field) {
         for (int i = 0; i < 10; i++)

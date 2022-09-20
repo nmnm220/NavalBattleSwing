@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class FieldDrawer extends JPanel implements MouseMotionListener, MouseListener {
     private PointCell[][] field;
+    private PointCell[][] hiddenField;
     private ArrayList<Ship> ships;
     private Point prevPos;
     private int drawingOffsetX = 0;
@@ -23,11 +24,23 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
         setSize(10 * PointCell.cellSizeX, 10 * PointCell.cellSizeX);
     }
 
+    FieldDrawer(PointCell[][] field, PointCell[][] hiddenField, ArrayList<Ship> ships) {
+        addMouseMotionListener(this);
+        addMouseListener(this);
+        this.field = field;
+        this.hiddenField = hiddenField;
+        this.ships = ships;
+        setBackground(Color.PINK);
+        setSize(10 * PointCell.cellSizeX, 10 * PointCell.cellSizeX);
+    }
+
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
+        /*if (hiddenField != null)
+            field = hiddenField;*/
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 switch (field[j][i].cellState) {
@@ -35,8 +48,8 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                         g2.setColor(Color.LIGHT_GRAY);
                         g2.fillRect(PointCell.cellSizeX * i, PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                         g2.setColor(Color.RED);
-                        g2.drawLine(0, 0, PointCell.cellSizeX, PointCell.cellSizeY);
-                        g2.drawLine(PointCell.cellSizeX, 0, 0, PointCell.cellSizeY);
+                        g2.drawLine(PointCell.cellSizeX * i, PointCell.cellSizeY * j, PointCell.cellSizeX * i + PointCell.cellSizeX, PointCell.cellSizeY * j + PointCell.cellSizeY);
+                        g2.drawLine(PointCell.cellSizeX + PointCell.cellSizeX * i, PointCell.cellSizeX * j, PointCell.cellSizeY * i, PointCell.cellSizeY + PointCell.cellSizeX * j);
                     }
                     case miss -> {
                         g2.setColor(new Color(80, 50, 255));
@@ -70,13 +83,16 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        GameLogic.moveShip(e, ships, field, prevPos);
+
+        if (shipPlacement) {
+            GameLogic.moveShip(e, ships, field);
+        }
         repaint();
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-       if (shipPlacement)
+        if (shipPlacement)
             GameLogic.setShipSelected(e, ships, field);
         else {
             GameLogic.setCellSelected(e, field);
@@ -86,14 +102,20 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getButton() == 3) {
+        if ((e.getButton() == 3) & (shipPlacement)) {
             GameLogic.turnShip(ships, field);
             MainWindow.updateShipsPos(ships, field);
             debug = e.getButton();
         }
-        if (!shipPlacement)
-            GameLogic.setMiss(field);
+        if (!shipPlacement) {
+            if(GameLogic.shoot(field, hiddenField))
+                GameLogic.nextTurn();
+        }
         repaint();
+    }
+
+    public void setShipPlacement(boolean shipPlacement) {
+        this.shipPlacement = shipPlacement;
     }
 
     @Override
@@ -103,13 +125,15 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (GameLogic.checkCollision(ships, field)) {
-            for (Ship ship : ships) ship.setPosition(new Point(ship.getInitPosition()));
-            MainWindow.updateShipsPos(ships, field);
-            repaint();
-        } else {
-            for (Ship ship : ships) ship.setInitPosition(new Point(ship.getPosition()));
-        }
+        if (shipPlacement)
+            if (GameLogic.checkCollision(ships, field)) {
+                for (Ship ship : ships) ship.setPosition(new Point(ship.getInitPosition()));
+                MainWindow.updateShipsPos(ships, field);
+                repaint();
+            } else {
+                for (Ship ship : ships) ship.setInitPosition(new Point(ship.getPosition()));
+            }
+        repaint();
     }
 
     @Override

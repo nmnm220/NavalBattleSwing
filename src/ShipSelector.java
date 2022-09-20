@@ -1,10 +1,6 @@
-import com.sun.tools.javac.Main;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class ShipSelector extends JPanel implements ActionListener {
@@ -98,7 +94,7 @@ public class ShipSelector extends JPanel implements ActionListener {
 
     public void placeShip() {
         shipsPool.get(shipNum).setPlaced();
-        MainWindow.newShip(shipsPool.get(shipNum), ships, field);
+        MainWindow.newRandomShipPosition(shipsPool.get(shipNum), ships, field);
         MainWindow.updateShipsPos(ships, field);
         fieldDrawer.repaint();
         int ctr = 0;
@@ -138,7 +134,6 @@ public class ShipSelector extends JPanel implements ActionListener {
     }
     static void startGame()
     {
-        MainWindow.shipPlacement = false;
     }
 
     @Override

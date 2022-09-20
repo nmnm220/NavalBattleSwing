@@ -2,20 +2,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Random;
 
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements ActionListener {
     //Ship[] playerShips = new Ship[10];
     static boolean shipPlacement = true;
     ArrayList<Ship> playerShips = new ArrayList<>();
     ArrayList<Ship> enemyShips = new ArrayList<>();
     ArrayList<Ship> playerShipsPool = new ArrayList<>();
+    ArrayList<Ship> enemyShipsPool = new ArrayList<>();
     PointCell[][] playerField = new PointCell[10][10];
     PointCell[][] enemyField = new PointCell[10][10];
+    PointCell[][] hiddenField = new PointCell[10][10];
     FieldDrawer playerFieldDrawer;
     FieldDrawer enemyFieldDrawer;
     ShipSelector shipSelector;
@@ -31,9 +31,10 @@ public class MainWindow extends JFrame {
         getContentPane().setBackground(new Color(80, 80, 150));
         Dimension frameSize = this.getSize();
 
-        initField(playerShipsPool, playerField);
+        fillWater(hiddenField);
+
+        initPool(playerShipsPool, playerField);
         playerFieldDrawer = new FieldDrawer(playerField, playerShips);
-        //playerFieldDrawer.setSize(10 * PointCell.cellSizeX, 10 * PointCell.cellSizeX);
         add(playerFieldDrawer);
 
         shipSelector = new ShipSelector(playerShipsPool, playerShips, playerField, playerFieldDrawer);
@@ -41,26 +42,35 @@ public class MainWindow extends JFrame {
         shipSelector.initUI();
         shipSelector.setLocation(PointCell.cellSizeX * 10, 0);
         add(shipSelector);
+        for (Component component: shipSelector.getComponents())
+            if ((component instanceof JButton) && ((JButton) component).getText().equals("Start game")) {
+                ((JButton) component).addActionListener(this);
+            }
     }
     public void startGame()
     {
         remove(shipSelector);
-        initField(enemyShips, enemyField);
-        enemyFieldDrawer = new FieldDrawer(enemyField, enemyShips);
-        enemyFieldDrawer.setLocation(PointCell.cellSizeX * 10, 0);
+        initPool(enemyShipsPool, enemyField);
+        randomPlacement(enemyShipsPool, enemyShips, enemyField);
+
+        enemyFieldDrawer = new FieldDrawer(hiddenField, enemyField, enemyShips);
+        enemyFieldDrawer.setShipPlacement(false);
+        enemyFieldDrawer.setLocation(PointCell.cellSizeX * 12, 0);
+
         add(enemyFieldDrawer);
+        playerFieldDrawer.setShipPlacement(false);
     }
 
-    private void initField(ArrayList<Ship> ships, PointCell[][] field) {
+    private void initPool(ArrayList<Ship> ships, PointCell[][] field) {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 field[i][j] = new PointCell(PointCell.state.water);
             }
         }
-        fillPool(ships);
+        fillShips(ships);
     }
 
-    private void fillPool(ArrayList<Ship> ships) {
+    private void fillShips(ArrayList<Ship> ships) {
         Point p = new Point();
         ships.add(new Ship(4, true, p));
         ships.add(new Ship(3, true, p));
@@ -73,23 +83,31 @@ public class MainWindow extends JFrame {
         ships.add(new Ship(1, true, p));
         ships.add(new Ship(1, true, p));
     }
+    static void randomPlacement(ArrayList<Ship> poolShips, ArrayList<Ship> ships, PointCell[][] field)
+    {
+        for (Ship poolShip: poolShips)
+        {
+            newRandomShipPosition(poolShip, ships, field);
+        }
+        //newRandomShipPosition();
+    }
 
-    static void newShip(Ship ship, ArrayList<Ship> ships, PointCell[][] field) {
+    static void newRandomShipPosition(Ship poolShip, ArrayList<Ship> ships, PointCell[][] field) {
         Random random = new Random();
         int rndX = random.nextInt(9);
         int rndY = random.nextInt(9);
         boolean turn = random.nextBoolean();
-        ship = new Ship(ship.getLength(), turn, new Point(rndX, rndY));
-        ships.add(ship);
-        ship.setPlaced();
+        poolShip = new Ship(poolShip.getLength(), turn, new Point(rndX, rndY));
+        ships.add(poolShip);
+        poolShip.setPlaced();
         for (int i = 0; i < 1000; i++) {
             if (GameLogic.checkCollision(ships, field)) {
                 rndX = random.nextInt(9);
                 rndY = random.nextInt(9);
                 turn = random.nextBoolean();
                 if (turn)
-                    ship.turn();
-                ship.setPosition(new Point(rndX, rndY));
+                    poolShip.turn();
+                poolShip.setPosition(new Point(rndX, rndY));
                 updateShipsPos(ships, field);
             }
         }
@@ -113,7 +131,15 @@ public class MainWindow extends JFrame {
 
     public static void fillWater(PointCell[][] field) {
         for (int i = 0; i < 10; i++)
-            for (int j = 0; j < 10; j++)
-                field[j][i].setCellState(PointCell.state.water);
+            for (int j = 0; j < 10; j++) {
+                field[j][i] = new PointCell(PointCell.state.water);
+                //field[j][i].setCellState(PointCell.state.water);
+            }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("start"))
+            startGame();
     }
 }

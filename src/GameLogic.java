@@ -89,10 +89,10 @@ public class GameLogic {
             turnShip(ships, field);
     }
 
-    static void moveShip(MouseEvent e, ArrayList<Ship> ships, PointCell[][] field, Point prevPos) {
+    static void moveShip(MouseEvent e, ArrayList<Ship> ships, PointCell[][] field) {
         for (Ship ship : ships) {
             if (ship.getSelected()) {
-                prevPos = ship.getPosition();
+                Point prevPos = ship.getPosition();
                 Point curPos = new Point(e.getX() / PointCell.cellSizeX, e.getY() / PointCell.cellSizeY);
                 curPos = setPosition(curPos, ship);
                 if (ship.isHorizontal) {
@@ -173,11 +173,23 @@ public class GameLogic {
 
     }
 
-    static void setMiss(PointCell[][] field) { //sets selected cell state to "miss"
+    static boolean shoot(PointCell[][] field, PointCell[][] hiddenField) { //sets selected cell state to "miss"
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++) {
-                if (field[j][i].getSelected())
-                    field[j][i].cellState = PointCell.state.miss;
+                if (field[j][i].getSelected()) {
+                    if (hiddenField[j][i].cellState == PointCell.state.water) {
+                        field[j][i].cellState = PointCell.state.miss;
+                        return false;
+                    } else {
+                        field[j][i].cellState = PointCell.state.hit;
+                        return true;
+                    }
+                }
             }
+        return false;
+    }
+    static void nextTurn()
+    {
+
     }
 }

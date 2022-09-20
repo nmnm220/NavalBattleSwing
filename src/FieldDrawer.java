@@ -108,9 +108,12 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
             debug = e.getButton();
         }
         if (!shipPlacement) {
-            if(GameLogic.shoot(field, hiddenField))
-                GameLogic.nextTurn();
+            GameLogic.shoot(field, hiddenField);
         }
+            /*if(GameLogic.shoot(field, hiddenField))
+                GameLogic.nextTurn();
+
+        }*/
         repaint();
     }
 

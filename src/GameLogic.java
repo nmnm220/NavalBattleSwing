@@ -174,22 +174,22 @@ public class GameLogic {
     }
 
     static boolean shoot(PointCell[][] field, PointCell[][] hiddenField) { //sets selected cell state to "miss"
+        boolean out = false;
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++) {
                 if (field[j][i].getSelected()) {
                     if (hiddenField[j][i].cellState == PointCell.state.water) {
                         field[j][i].cellState = PointCell.state.miss;
-                        return false;
+                        out = false;
                     } else {
                         field[j][i].cellState = PointCell.state.hit;
-                        return true;
+                        out = true;
                     }
                 }
             }
-        return false;
+        return out;
     }
     static void nextTurn()
     {
-
     }
 }

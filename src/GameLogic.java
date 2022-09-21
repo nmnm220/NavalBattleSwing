@@ -46,6 +46,18 @@ public class GameLogic {
             }
     }
 
+    static PointCell currentCell(MouseEvent e, PointCell[][] field) {
+        for (int i = 0; i < 10; i++)
+            for (int j = 0; j < 10; j++) {
+                if (((e.getX() >= i * PointCell.cellSizeX) & (e.getX() <= i * PointCell.cellSizeX + PointCell.cellSizeX)) &
+                        ((e.getY() >= j * PointCell.cellSizeY) & (e.getY() <= j * PointCell.cellSizeY + PointCell.cellSizeY))) {
+                    return field[j][i];
+                }
+            }
+        return null;
+    }
+
+
     static void setShipSelected(MouseEvent e, ArrayList<Ship> ships, PointCell[][] field) { //sets all cells of the ship selected when mouse is on the ship
         for (Ship ship :
                 ships) {
@@ -173,23 +185,44 @@ public class GameLogic {
 
     }
 
-    static boolean shoot(PointCell[][] field, PointCell[][] hiddenField) { //sets selected cell state to "miss"
-        boolean out = false;
+    static boolean shoot(MouseEvent e, PointCell[][] field, PointCell[][] hiddenField) { //sets selected cell state to "miss/hit"
+        /*
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++) {
                 if (field[j][i].getSelected()) {
                     if (hiddenField[j][i].cellState == PointCell.state.water) {
                         field[j][i].cellState = PointCell.state.miss;
                         out = false;
-                    } else {
+                    } else if (hiddenField[j][i].cellState == PointCell.state.ship) {
                         field[j][i].cellState = PointCell.state.hit;
                         out = true;
                     }
                 }
             }
         return out;
+         */
+        PointCell curPoint = currentCell(e, hiddenField);
+        if (curPoint.cellState == PointCell.state.water) {
+            field[curPoint.coordinate.y][curPoint.coordinate.x].cellState = PointCell.state.miss;
+            return false;
+        }
+        else {
+            field[curPoint.coordinate.y][curPoint.coordinate.x].cellState = PointCell.state.hit;
+            return true;
+        }
+
     }
-    static void nextTurn()
-    {
+
+    static boolean shoot(PointCell[][] field, int x, int y) {
+        if (field[y][x].cellState == PointCell.state.ship) {
+            field[y][x].cellState = PointCell.state.hit;
+            return true;
+        } else {
+            field[y][x].cellState = PointCell.state.miss;
+            return false;
+        }
+    }
+
+    static void nextTurn() {
     }
 }

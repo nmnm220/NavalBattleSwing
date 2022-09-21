@@ -1,3 +1,5 @@
+import java.awt.*;
+
 public class PointCell {
 
     public enum state
@@ -10,11 +12,13 @@ public class PointCell {
         waterSelected
     }
     state cellState;
+    Point coordinate;
     private boolean isSelected = false;
     public static int cellSizeX = 30;
     public static int cellSizeY = 30;
-    PointCell(state cellState)
+    PointCell(state cellState, Point coordinate)
     {
+        this.coordinate = coordinate;
         this.cellState = cellState;
     }
     public void setCellState(state state)

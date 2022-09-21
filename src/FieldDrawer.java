@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FieldDrawer extends JPanel implements MouseMotionListener, MouseListener {
     private PointCell[][] field;
@@ -14,6 +15,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     private int drawingOffsetY = 0;
     int debug = 0;
     boolean shipPlacement = true;
+    private AI ai;
 
     FieldDrawer(PointCell[][] field, ArrayList<Ship> ships) {
         addMouseMotionListener(this);
@@ -32,6 +34,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
         this.ships = ships;
         setBackground(Color.PINK);
         setSize(10 * PointCell.cellSizeX, 10 * PointCell.cellSizeX);
+        ai = new AI();
     }
 
 
@@ -92,12 +95,13 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (shipPlacement)
+        if (shipPlacement) {
             GameLogic.setShipSelected(e, ships, field);
-        else {
+            repaint();
+        } else if (ai != null) {
             GameLogic.setCellSelected(e, field);
+            repaint();
         }
-        repaint();
     }
 
     @Override
@@ -108,12 +112,17 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
             debug = e.getButton();
         }
         if (!shipPlacement) {
-            GameLogic.shoot(field, hiddenField);
+            boolean shoot = true;
+            if (GameLogic.currentCell(e, field) != null && Objects.requireNonNull(GameLogic.currentCell(e, field)).cellState == PointCell.state.waterSelected)
+                shoot = GameLogic.shoot(e, field, hiddenField);
+            if (!shoot) {
+                if (ai != null) {
+                    ai.shoot();
+                    MainWindow.refFieldDrawer.repaint();
+                    repaint();
+                }
+            }
         }
-            /*if(GameLogic.shoot(field, hiddenField))
-                GameLogic.nextTurn();
-
-        }*/
         repaint();
     }
 

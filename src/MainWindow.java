@@ -9,6 +9,7 @@ import java.util.Random;
 public class MainWindow extends JFrame implements ActionListener {
     //Ship[] playerShips = new Ship[10];
     static boolean shipPlacement = true;
+    static FieldDrawer refFieldDrawer;
     ArrayList<Ship> playerShips = new ArrayList<>();
     ArrayList<Ship> enemyShips = new ArrayList<>();
     ArrayList<Ship> playerShipsPool = new ArrayList<>();
@@ -59,12 +60,16 @@ public class MainWindow extends JFrame implements ActionListener {
 
         add(enemyFieldDrawer);
         playerFieldDrawer.setShipPlacement(false);
+        playerFieldDrawer.repaint();
+        enemyFieldDrawer.repaint();
+        AI.field = playerField;
+        refFieldDrawer = playerFieldDrawer;
     }
 
     private void initPool(ArrayList<Ship> ships, PointCell[][] field) {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                field[i][j] = new PointCell(PointCell.state.water);
+                field[i][j] = new PointCell(PointCell.state.water, new Point(i, j));
             }
         }
         fillShips(ships);
@@ -132,7 +137,7 @@ public class MainWindow extends JFrame implements ActionListener {
     public static void fillWater(PointCell[][] field) {
         for (int i = 0; i < 10; i++)
             for (int j = 0; j < 10; j++) {
-                field[j][i] = new PointCell(PointCell.state.water);
+                field[j][i] = new PointCell(PointCell.state.water, new Point(i, j));
                 //field[j][i].setCellState(PointCell.state.water);
             }
     }

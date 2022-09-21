@@ -31,8 +31,8 @@ public class GameLogic {
     }
 
     static void setCellSelected(MouseEvent e, PointCell[][] field) { //sets cell selected when selecting single cell
-        for (int i = 0; i < 10; i++)
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < MainWindow.FIELD_SIZE; i++)
+            for (int j = 0; j < MainWindow.FIELD_SIZE; j++) {
                 if (((e.getX() >= i * PointCell.cellSizeX) & (e.getX() <= i * PointCell.cellSizeX + PointCell.cellSizeX)) &
                         ((e.getY() >= j * PointCell.cellSizeY) & (e.getY() <= j * PointCell.cellSizeY + PointCell.cellSizeY))) {
                     if (field[j][i].cellState == PointCell.state.water) {
@@ -47,8 +47,8 @@ public class GameLogic {
     }
 
     static PointCell currentCell(MouseEvent e, PointCell[][] field) {
-        for (int i = 0; i < 10; i++)
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < MainWindow.FIELD_SIZE; i++)
+            for (int j = 0; j < MainWindow.FIELD_SIZE; j++) {
                 if (((e.getX() >= i * PointCell.cellSizeX) & (e.getX() <= i * PointCell.cellSizeX + PointCell.cellSizeX)) &
                         ((e.getY() >= j * PointCell.cellSizeY) & (e.getY() <= j * PointCell.cellSizeY + PointCell.cellSizeY))) {
                     return field[j][i];
@@ -91,7 +91,7 @@ public class GameLogic {
 
     static void turnShip(ArrayList<Ship> ships, PointCell[][] field) { //turns the ships not letting it go out of array index
         for (Ship ship : ships) {
-            if (ship.getSelected() & (ship.getPosition().x + ship.getLength() <= 10) & (ship.getPosition().y + ship.getLength() <= 10)) {
+            if (ship.getSelected() & (ship.getPosition().x + ship.getLength() <= MainWindow.FIELD_SIZE) & (ship.getPosition().y + ship.getLength() <= MainWindow.FIELD_SIZE)) {
                 ship.turn();
             }
         }
@@ -160,12 +160,12 @@ public class GameLogic {
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= length; j++) {
                     if (ship.isHorizontal) {
-                        if (!((pX + j >= 10) || (pX + j < 0) || (pY + i >= 10) || (pY + i < 0)))
+                        if (!((pX + j >= MainWindow.FIELD_SIZE) || (pX + j < 0) || (pY + i >= MainWindow.FIELD_SIZE) || (pY + i < 0)))
                             if (field[pY + i][pX + j].cellState == PointCell.state.ship) {
                                 ctr++;
                             }
                     } else {
-                        if (!((pX + i >= 10) || (pX + i < 0) || (pY + j >= 10) || (pY + j < 0)))
+                        if (!((pX + i >= MainWindow.FIELD_SIZE) || (pX + i < 0) || (pY + j >= MainWindow.FIELD_SIZE) || (pY + j < 0)))
                             if (field[pY + j][pX + i].cellState == PointCell.state.ship) {
                                 ctr++;
                             }
@@ -185,36 +185,37 @@ public class GameLogic {
 
     }
 
-    static boolean shoot(MouseEvent e, PointCell[][] field, PointCell[][] hiddenField) { //sets selected cell state to "miss/hit"
-        /*
-        for (int i = 0; i < 10; i++)
-            for (int j = 0; j < 10; j++) {
-                if (field[j][i].getSelected()) {
-                    if (hiddenField[j][i].cellState == PointCell.state.water) {
-                        field[j][i].cellState = PointCell.state.miss;
-                        out = false;
-                    } else if (hiddenField[j][i].cellState == PointCell.state.ship) {
-                        field[j][i].cellState = PointCell.state.hit;
-                        out = true;
-                    }
-                }
-            }
-        return out;
-         */
+    static boolean shoot(MouseEvent e, ArrayList<Ship> ships, PointCell[][] field, PointCell[][] hiddenField) { //sets selected cell state to "miss/hit"
         PointCell curPoint = currentCell(e, hiddenField);
         if (curPoint.cellState == PointCell.state.water) {
             field[curPoint.coordinate.y][curPoint.coordinate.x].cellState = PointCell.state.miss;
             return false;
         } else {
             field[curPoint.coordinate.y][curPoint.coordinate.x].cellState = PointCell.state.hit;
+            if (currentShip(ships, curPoint.coordinate.x, curPoint.coordinate.y) != null) {
+                Ship cShip = currentShip(ships, curPoint.coordinate.x, curPoint.coordinate.y);
+                cShip.hit();
+                if (!cShip.isAlive()) {
+                    shipDraw(cShip, field);
+                    checkWin(ships);
+                }
+            }
             return true;
         }
 
     }
 
-    static boolean shoot(PointCell[][] field, int x, int y) {
+    static boolean shoot(PointCell[][] field, ArrayList<Ship> ships, int x, int y) {
         if (field[y][x].cellState == PointCell.state.ship) {
             field[y][x].cellState = PointCell.state.hit;
+            Ship cShip = currentShip(ships, x, y);
+            if (cShip != null) {
+                cShip.hit();
+                if (!cShip.isAlive()) {
+                    shipDraw(cShip, field);
+                    checkLoose(ships);
+                }
+            }
             return true;
         } else {
             field[y][x].cellState = PointCell.state.miss;
@@ -222,6 +223,55 @@ public class GameLogic {
         }
     }
 
-    static void nextTurn() {
+    static Ship currentShip(ArrayList<Ship> ships, int x, int y) {
+        for (Ship ship : ships)
+            if (ship.isHorizontal) {
+                for (int i = 0; i < ship.getLength(); i++)
+                    if (ship.getPosition().x + i == x & ship.getPosition().y == y)
+                        return ship;
+            } else
+                for (int i = 0; i < ship.getLength(); i++)
+                    if (ship.getPosition().x == x & ship.getPosition().y + i == y)
+                        return ship;
+        return null;
+    }
+
+    static void shipDraw(Ship ship, PointCell[][] field) {
+        int pX = ship.getPosition().x;
+        int pY = ship.getPosition().y;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= ship.getLength(); j++) {
+                if (ship.isHorizontal) {
+                    if (!((pX + j >= MainWindow.FIELD_SIZE) || (pX + j < 0) || (pY + i >= MainWindow.FIELD_SIZE) || (pY + i < 0)))
+                        if (field[pY + i][pX + j].cellState == PointCell.state.water) {
+                            field[pY + i][pX + j].cellState = PointCell.state.miss;
+                        }
+                } else {
+                    if (!((pX + i >= MainWindow.FIELD_SIZE) || (pX + i < 0) || (pY + j >= MainWindow.FIELD_SIZE) || (pY + j < 0)))
+                        if (field[pY + j][pX + i].cellState == PointCell.state.water) {
+                            field[pY + j][pX + i].cellState = PointCell.state.miss;
+                        }
+                }
+            }
+        }
+
+    }
+
+    static void checkLoose(ArrayList<Ship> ships) {
+        int ctr = 0;
+        for (Ship ship : ships)
+            if (ship.isAlive())
+                ctr++;
+        if (ctr == 0)
+            MainWindow.win = false;
+    }
+
+    static void checkWin(ArrayList<Ship> ships) {
+        int ctr = 0;
+        for (Ship ship : ships)
+            if (ship.isAlive())
+                ctr++;
+        if (ctr == 0)
+            MainWindow.win = true;
     }
 }

@@ -7,16 +7,17 @@ import java.util.Random;
 
 
 public class MainWindow extends JFrame implements ActionListener {
-    //Ship[] playerShips = new Ship[10];
+    static final int FIELD_SIZE = 10;
     static boolean shipPlacement = true;
+    static boolean win;
     static FieldDrawer refFieldDrawer;
     ArrayList<Ship> playerShips = new ArrayList<>();
     ArrayList<Ship> enemyShips = new ArrayList<>();
     ArrayList<Ship> playerShipsPool = new ArrayList<>();
     ArrayList<Ship> enemyShipsPool = new ArrayList<>();
-    PointCell[][] playerField = new PointCell[10][10];
-    PointCell[][] enemyField = new PointCell[10][10];
-    PointCell[][] hiddenField = new PointCell[10][10];
+    PointCell[][] playerField = new PointCell[FIELD_SIZE][FIELD_SIZE];
+    PointCell[][] enemyField = new PointCell[FIELD_SIZE][FIELD_SIZE];
+    PointCell[][] hiddenField = new PointCell[FIELD_SIZE][FIELD_SIZE];
     FieldDrawer playerFieldDrawer;
     FieldDrawer enemyFieldDrawer;
     ShipSelector shipSelector;
@@ -41,7 +42,7 @@ public class MainWindow extends JFrame implements ActionListener {
         shipSelector = new ShipSelector(playerShipsPool, playerShips, playerField, playerFieldDrawer);
         shipSelector.setSize(frameSize.width / 5, playerFieldDrawer.getHeight());
         shipSelector.initUI();
-        shipSelector.setLocation(PointCell.cellSizeX * 10, 0);
+        shipSelector.setLocation(PointCell.cellSizeX * FIELD_SIZE, 0);
         add(shipSelector);
         for (Component component : shipSelector.getComponents())
             if ((component instanceof JButton) && ((JButton) component).getText().equals("Start game")) {
@@ -56,19 +57,20 @@ public class MainWindow extends JFrame implements ActionListener {
 
         enemyFieldDrawer = new FieldDrawer(hiddenField, enemyField, enemyShips);
         enemyFieldDrawer.setShipPlacement(false);
-        enemyFieldDrawer.setLocation(PointCell.cellSizeX * 12, 0);
+        enemyFieldDrawer.setLocation(PointCell.cellSizeX * FIELD_SIZE + 2, 0);
 
         add(enemyFieldDrawer);
         playerFieldDrawer.setShipPlacement(false);
         playerFieldDrawer.repaint();
         enemyFieldDrawer.repaint();
         AI.field = playerField;
+        AI.ships = playerShips;
         refFieldDrawer = playerFieldDrawer;
     }
 
     private void initPool(ArrayList<Ship> ships, PointCell[][] field) {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < FIELD_SIZE; i++) {
+            for (int j = 0; j < FIELD_SIZE; j++) {
                 field[i][j] = new PointCell(PointCell.state.water, new Point(i, j));
             }
         }
@@ -93,21 +95,20 @@ public class MainWindow extends JFrame implements ActionListener {
         for (Ship poolShip : poolShips) {
             newRandomShipPosition(poolShip, ships, field);
         }
-        //newRandomShipPosition();
     }
 
     static void newRandomShipPosition(Ship poolShip, ArrayList<Ship> ships, PointCell[][] field) {
         Random random = new Random();
-        int rndX = random.nextInt(9);
-        int rndY = random.nextInt(9);
+        int rndX = random.nextInt(FIELD_SIZE - 1);
+        int rndY = random.nextInt(FIELD_SIZE - 1);
         boolean turn = random.nextBoolean();
         poolShip = new Ship(poolShip.getLength(), turn, new Point(rndX, rndY));
         ships.add(poolShip);
         poolShip.setPlaced();
         for (int i = 0; i < 1000; i++) {
             if (GameLogic.checkCollision(ships, field)) {
-                rndX = random.nextInt(9);
-                rndY = random.nextInt(9);
+                rndX = random.nextInt(FIELD_SIZE - 1);
+                rndY = random.nextInt(FIELD_SIZE - 1);
                 turn = random.nextBoolean();
                 if (turn)
                     poolShip.turn();
@@ -122,9 +123,9 @@ public class MainWindow extends JFrame implements ActionListener {
         for (Ship ship : ships)
             if (ship.getPlaced())
                 for (int j = 0; j < ship.getLength(); j++) {
-                    if ((ship.isHorizontal) & (ship.getPosition().x + j) < 10)
+                    if ((ship.isHorizontal) & (ship.getPosition().x + j) < FIELD_SIZE)
                         field[ship.getPosition().y][ship.getPosition().x + j].setCellState(PointCell.state.ship);
-                    else if ((!ship.isHorizontal) & (ship.getPosition().y + j) < 10)
+                    else if ((!ship.isHorizontal) & (ship.getPosition().y + j) < FIELD_SIZE)
                         field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.ship);
                 }
     }
@@ -134,8 +135,8 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
     public static void fillWater(PointCell[][] field) {
-        for (int i = 0; i < 10; i++)
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < FIELD_SIZE; i++)
+            for (int j = 0; j < FIELD_SIZE; j++) {
                 field[j][i] = new PointCell(PointCell.state.water, new Point(i, j));
                 //field[j][i].setCellState(PointCell.state.water);
             }

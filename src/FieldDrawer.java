@@ -23,7 +23,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
         this.field = field;
         this.ships = ships;
         setBackground(Color.PINK);
-        setSize(10 * PointCell.cellSizeX, 10 * PointCell.cellSizeX);
+        setSize(MainWindow.FIELD_SIZE * PointCell.cellSizeX, MainWindow.FIELD_SIZE * PointCell.cellSizeX);
     }
 
     FieldDrawer(PointCell[][] field, PointCell[][] hiddenField, ArrayList<Ship> ships) {
@@ -33,7 +33,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
         this.hiddenField = hiddenField;
         this.ships = ships;
         setBackground(Color.PINK);
-        setSize(10 * PointCell.cellSizeX, 10 * PointCell.cellSizeX);
+        setSize(MainWindow.FIELD_SIZE * PointCell.cellSizeX, MainWindow.FIELD_SIZE * PointCell.cellSizeX);
         ai = new AI();
     }
 
@@ -114,7 +114,7 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
         if (!shipPlacement) {
             boolean shoot = true;
             if (GameLogic.currentCell(e, field) != null && Objects.requireNonNull(GameLogic.currentCell(e, field)).cellState == PointCell.state.waterSelected)
-                shoot = GameLogic.shoot(e, field, hiddenField);
+                shoot = GameLogic.shoot(e, ships, field, hiddenField);
             if (!shoot) {
                 if (ai != null) {
                     ai.shoot();

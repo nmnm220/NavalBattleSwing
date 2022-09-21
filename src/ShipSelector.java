@@ -132,8 +132,8 @@ public class ShipSelector extends JPanel implements ActionListener {
         shipDrawer.drawShip(shipsPool.get(shipNum), shipNum);
         shipDrawer.repaint();
     }
-    static void startGame()
-    {
+
+    static void startGame() {
     }
 
     @Override

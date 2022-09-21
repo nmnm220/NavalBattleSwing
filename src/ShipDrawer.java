@@ -3,12 +3,14 @@ import java.awt.*;
 
 public class ShipDrawer extends JPanel {
     int shipNum;
-    ShipDrawer(Ship ship, int shipNum)
-    {
+
+    ShipDrawer(Ship ship, int shipNum) {
         this.ship = ship;
         this.shipNum = shipNum;
     }
+
     Ship ship;
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -21,12 +23,11 @@ public class ShipDrawer extends JPanel {
                 g2.drawRect(PointCell.cellSizeX * i, PointCell.cellSizeY, PointCell.cellSizeX, PointCell.cellSizeY);
             }
             g2.drawString("Ship: " + shipNum, PointCell.cellSizeX, PointCell.cellSizeY * 3);
-        }
-        else
+        } else
             g2.drawString("All ships are placed", PointCell.cellSizeX, PointCell.cellSizeY * 3);
     }
-    public void drawShip(Ship ship, int shipNum)
-    {
+
+    public void drawShip(Ship ship, int shipNum) {
         this.ship = ship;
         this.shipNum = shipNum;
         repaint();

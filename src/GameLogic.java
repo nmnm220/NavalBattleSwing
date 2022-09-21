@@ -205,8 +205,7 @@ public class GameLogic {
         if (curPoint.cellState == PointCell.state.water) {
             field[curPoint.coordinate.y][curPoint.coordinate.x].cellState = PointCell.state.miss;
             return false;
-        }
-        else {
+        } else {
             field[curPoint.coordinate.y][curPoint.coordinate.x].cellState = PointCell.state.hit;
             return true;
         }

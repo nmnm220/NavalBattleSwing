@@ -43,13 +43,13 @@ public class MainWindow extends JFrame implements ActionListener {
         shipSelector.initUI();
         shipSelector.setLocation(PointCell.cellSizeX * 10, 0);
         add(shipSelector);
-        for (Component component: shipSelector.getComponents())
+        for (Component component : shipSelector.getComponents())
             if ((component instanceof JButton) && ((JButton) component).getText().equals("Start game")) {
                 ((JButton) component).addActionListener(this);
             }
     }
-    public void startGame()
-    {
+
+    public void startGame() {
         remove(shipSelector);
         initPool(enemyShipsPool, enemyField);
         randomPlacement(enemyShipsPool, enemyShips, enemyField);
@@ -88,10 +88,9 @@ public class MainWindow extends JFrame implements ActionListener {
         ships.add(new Ship(1, true, p));
         ships.add(new Ship(1, true, p));
     }
-    static void randomPlacement(ArrayList<Ship> poolShips, ArrayList<Ship> ships, PointCell[][] field)
-    {
-        for (Ship poolShip: poolShips)
-        {
+
+    static void randomPlacement(ArrayList<Ship> poolShips, ArrayList<Ship> ships, PointCell[][] field) {
+        for (Ship poolShip : poolShips) {
             newRandomShipPosition(poolShip, ships, field);
         }
         //newRandomShipPosition();
@@ -129,9 +128,9 @@ public class MainWindow extends JFrame implements ActionListener {
                         field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.ship);
                 }
     }
-    public static void removeShips(ArrayList<Ship> ships)
-    {
-            ships.removeAll(ships);
+
+    public static void removeShips(ArrayList<Ship> ships) {
+        ships.removeAll(ships);
     }
 
     public static void fillWater(PointCell[][] field) {

@@ -15,8 +15,8 @@ public class AI {
             xCoord = random.nextInt(9);
             yCoord = random.nextInt(9);
         }
-        while(GameLogic.shoot(field, xCoord, yCoord))
-            GameLogic.shoot(field, xCoord, yCoord);
+        if (GameLogic.shoot(field, xCoord, yCoord))
+            shoot();
     }
 }
 

@@ -9,10 +9,11 @@ public class AI {
         Random random = new Random();
         int xCoord = random.nextInt(MainWindow.FIELD_SIZE - 1);
         int yCoord = random.nextInt(MainWindow.FIELD_SIZE - 1);
-        while ((field[yCoord][xCoord].cellState == PointCell.state.miss) || (field[yCoord][xCoord].cellState == PointCell.state.hit)) {
-            xCoord = random.nextInt(MainWindow.FIELD_SIZE - 1);
-            yCoord = random.nextInt(MainWindow.FIELD_SIZE - 1);
-        }
+        for (int i = 0; i < 1000; i++)
+            if ((field[yCoord][xCoord].cellState == PointCell.state.miss) || (field[yCoord][xCoord].cellState == PointCell.state.hit)) {
+                xCoord = random.nextInt(MainWindow.FIELD_SIZE - 1);
+                yCoord = random.nextInt(MainWindow.FIELD_SIZE - 1);
+            }
         if (GameLogic.shoot(field, ships, xCoord, yCoord))
             shoot();
     }

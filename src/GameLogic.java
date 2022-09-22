@@ -6,6 +6,7 @@ import java.util.ArrayList;
 Game logic
  */
 public class GameLogic {
+    private static MainWindow refMainWindow;
     static Point setPosition(Point point, Ship ship) { //sets position of all ships
         if (ship.isHorizontal) {
             if (point.x + ship.getLength() > 10)
@@ -96,7 +97,6 @@ public class GameLogic {
             }
         }
         MainWindow.updateShipsPos(ships, field);
-        //repaint();
         if (checkCollision(ships, field))
             turnShip(ships, field);
     }
@@ -119,7 +119,6 @@ public class GameLogic {
             }
         }
         MainWindow.updateShipsPos(ships, field);
-        //repaint();
     }
 
     /*static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) {
@@ -262,8 +261,10 @@ public class GameLogic {
         for (Ship ship : ships)
             if (ship.isAlive())
                 ctr++;
-        if (ctr == 0)
+        if (ctr == 0) {
             MainWindow.win = false;
+            gameOver();
+        }
     }
 
     static void checkWin(ArrayList<Ship> ships) {
@@ -271,7 +272,18 @@ public class GameLogic {
         for (Ship ship : ships)
             if (ship.isAlive())
                 ctr++;
-        if (ctr == 0)
+        if (ctr == 0) {
             MainWindow.win = true;
+            gameOver();
+        }
+    }
+
+    public static void setRefMainWindow(MainWindow refMainWindow) {
+        GameLogic.refMainWindow = refMainWindow;
+    }
+
+    static void gameOver()
+    {
+        refMainWindow.gameOver();
     }
 }

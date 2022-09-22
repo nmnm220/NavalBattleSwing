@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class MainWindow extends JFrame implements ActionListener {
     static final int FIELD_SIZE = 10;
-    static boolean shipPlacement = true;
+    //static boolean shipPlacement = true;
     static boolean win;
     static FieldDrawer refFieldDrawer;
     ArrayList<Ship> playerShips = new ArrayList<>();
@@ -32,6 +32,7 @@ public class MainWindow extends JFrame implements ActionListener {
         setLayout(null);
         getContentPane().setBackground(new Color(80, 80, 150));
         Dimension frameSize = this.getSize();
+
 
         fillWater(hiddenField);
 
@@ -66,6 +67,19 @@ public class MainWindow extends JFrame implements ActionListener {
         AI.field = playerField;
         AI.ships = playerShips;
         refFieldDrawer = playerFieldDrawer;
+        GameLogic.setRefMainWindow(this);
+    }
+
+    public void gameOver() {
+        for (Component component : getComponents()) {
+            this.remove(component);
+        }
+        JLabel gameOverLabel = new JLabel();
+        gameOverLabel.setBackground(Color.white);
+        if (win)
+            gameOverLabel.setText("You Win!");
+        else
+            gameOverLabel.setText("You Lose!");
     }
 
     private void initPool(ArrayList<Ship> ships, PointCell[][] field) {
@@ -138,7 +152,6 @@ public class MainWindow extends JFrame implements ActionListener {
         for (int i = 0; i < FIELD_SIZE; i++)
             for (int j = 0; j < FIELD_SIZE; j++) {
                 field[j][i] = new PointCell(PointCell.state.water, new Point(i, j));
-                //field[j][i].setCellState(PointCell.state.water);
             }
     }
 

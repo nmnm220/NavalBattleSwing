@@ -52,7 +52,7 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
     public void startGame() {
-        remove(shipSelector);
+        getContentPane().remove(shipSelector);
         initPool(enemyShipsPool, enemyField);
         randomPlacement(enemyShipsPool, enemyShips, enemyField);
 
@@ -71,15 +71,22 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
     public void gameOver() {
-        for (Component component : getComponents()) {
-            this.remove(component);
-        }
+        getContentPane().removeAll();
+        this.validate();
+        getContentPane().setBackground(Color.WHITE);
         JLabel gameOverLabel = new JLabel();
         gameOverLabel.setBackground(Color.white);
-        if (win)
+        gameOverLabel.setLocation(PointCell.cellSizeX * FIELD_SIZE, PointCell.cellSizeX * FIELD_SIZE / 2);
+        gameOverLabel.setSize(PointCell.cellSizeX * FIELD_SIZE * 2, PointCell.cellSizeX * FIELD_SIZE);
+        gameOverLabel.setFont(new Font("Arial", Font.BOLD, 72));
+        if (win) {
             gameOverLabel.setText("You Win!");
-        else
+        } else {
             gameOverLabel.setText("You Lose!");
+        }
+        this.add(gameOverLabel);
+        this.getContentPane().revalidate();
+        this.repaint();
     }
 
     private void initPool(ArrayList<Ship> ships, PointCell[][] field) {

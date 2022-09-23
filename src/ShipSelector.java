@@ -26,16 +26,17 @@ public class ShipSelector extends JPanel implements ActionListener {
     public void initUI() {
         setLayout(null);
         var size = this.getSize();
+        int buttonHeight = size.height / 10;
 
-        nextButton.setSize(size.height / 4, size.height / 7);
-        prevButton.setSize(size.height / 4, size.height / 7);
-        placeShipButton.setSize(size.width, size.height / 6);
-        resetButton.setSize(size.width, size.height / 6);
+        nextButton.setSize(size.height / 6, buttonHeight);
+        prevButton.setSize(size.height / 6, buttonHeight);
+        placeShipButton.setSize(size.width, buttonHeight);
+        resetButton.setSize(size.width, buttonHeight);
 
         nextButton.setLocation(size.width - nextButton.getSize().width, 2 * size.width / 3);
         prevButton.setLocation(0, 2 * size.width / 3);
-        placeShipButton.setLocation(size.width / 2 - placeShipButton.getSize().width / 2, 2 * size.height / 3);
-        resetButton.setLocation(size.width / 2 - placeShipButton.getSize().width / 2, 4 * size.height / 5);
+        placeShipButton.setLocation(size.width / 2 - placeShipButton.getSize().width / 2, 5 * size.height / 8);
+        resetButton.setLocation(size.width / 2 - placeShipButton.getSize().width / 2, 6 * size.height / 8);
 
 
         add(nextButton);
@@ -55,18 +56,16 @@ public class ShipSelector extends JPanel implements ActionListener {
 
         shipDrawer = new ShipDrawer(shipsPool.get(0), shipNum);
         shipDrawer.setSize(size.height / 2, size.height / 3);
-        shipDrawer.setLocation(size.width / 2 - shipDrawer.getSize().width / 2, size.height / 8);
+        shipDrawer.setLocation(size.width / 2 - shipDrawer.getSize().width / 3, size.height / 20);
         add(shipDrawer);
 
-        startGameButton.setSize(size.width, size.height / 6);
+        startGameButton.setSize(size.width, buttonHeight);
         startGameButton.addActionListener(this);
-        startGameButton.setLocation(size.width / 2 - startGameButton.getSize().width / 2, 5 * size.height / 6);
+        startGameButton.setLocation(size.width / 2 - startGameButton.getSize().width / 2, 7 * size.height / 8);
         startGameButton.setActionCommand("start");
+        startGameButton.setEnabled(false);
         add(startGameButton);
     }
-    /*public void startGame()
-    {
-    }*/
 
     public void nextShip() {
         shipNum++;
@@ -107,6 +106,7 @@ public class ShipSelector extends JPanel implements ActionListener {
                 placeShipButton.setEnabled(false);
                 nextButton.setEnabled(false);
                 prevButton.setEnabled(false);
+                startGameButton.setEnabled(true);
                 return;
             }
         }
@@ -133,8 +133,7 @@ public class ShipSelector extends JPanel implements ActionListener {
         shipDrawer.repaint();
     }
 
-    static void startGame() {
-    }
+    public void startGame() {};
 
     @Override
     public void actionPerformed(ActionEvent e) {

@@ -120,16 +120,16 @@ public class MainWindow extends JFrame implements ActionListener {
 
     static void newRandomShipPosition(Ship poolShip, ArrayList<Ship> ships, PointCell[][] field) {
         Random random = new Random();
-        int rndX = random.nextInt(FIELD_SIZE - 1);
-        int rndY = random.nextInt(FIELD_SIZE - 1);
+        int rndX = random.nextInt(FIELD_SIZE);
+        int rndY = random.nextInt(FIELD_SIZE);
         boolean turn = random.nextBoolean();
         poolShip = new Ship(poolShip.getLength(), turn, new Point(rndX, rndY));
         ships.add(poolShip);
         poolShip.setPlaced();
         for (int i = 0; i < 1000; i++) {
             if (GameLogic.checkCollision(ships, field)) {
-                rndX = random.nextInt(FIELD_SIZE - 1);
-                rndY = random.nextInt(FIELD_SIZE - 1);
+                rndX = random.nextInt(FIELD_SIZE);
+                rndY = random.nextInt(FIELD_SIZE);
                 turn = random.nextBoolean();
                 if (turn)
                     poolShip.turn();

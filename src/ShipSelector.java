@@ -126,6 +126,7 @@ public class ShipSelector extends JPanel implements ActionListener {
         prevButton.setEnabled(true);
         if (shipsPool.get(shipNum).getPlaced())
             nextShip();
+        startGameButton.setEnabled(false);
         MainWindow.removeShips(ships);
         MainWindow.updateShipsPos(ships, field);
         fieldDrawer.repaint();

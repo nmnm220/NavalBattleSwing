@@ -4,19 +4,23 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static java.lang.Math.abs;
+
 public class AI {
     static PointCell[][] field;
     static ArrayList<Ship> ships;
     private static int direction = 0;
     private int x;
     private int y;
-    ArrayList<Point> hitPoints = new ArrayList<>();
+    int l = 0;
+    int k = 0;
+
 
     static boolean hit;
 
     public void shoot() {
-        x = -1;
-        y = -1;
+        //x = -1;
+        //y = -1;
         findHit();
         if (x < 0) {
             Random random = new Random();
@@ -36,6 +40,7 @@ public class AI {
     }
 
     private void findHit() {
+        ArrayList<Point> hitPoints = new ArrayList<>();
         for (int i = 0; i < MainWindow.FIELD_SIZE; i++)
             for (int j = 0; j < MainWindow.FIELD_SIZE; j++) {
                 if (field[j][i].cellState == PointCell.state.hit) {
@@ -43,15 +48,23 @@ public class AI {
                 }
             }
         for (Point point : hitPoints)
-            for (int k = -1; k <= 1; k++)
-                for (int l = -1; l <= 1; l++) {
-                    if ((point.x + l) >= 0 & (point.y + k) >= 0 & (point.x + l) < 10 & (point.y + k) < 10) {
-                        if ((field[point.x + l][point.y + k].cellState != PointCell.state.hit && field[point.x + l][point.y + k].cellState != PointCell.state.miss)) {
+            for (k = -1; k <= 1; k++)
+                for (l = 1; l >= -1; l--) {
+                    if ((point.x + l) >= 0 & (point.y + k) >= 0 & (point.x + l) < 10 & (point.y + k) < 10 & (abs(k) != abs(l))) {
+                        if ((field[point.y + k][point.x + l].cellState == PointCell.state.water) || (field[point.y + k][point.x + l].cellState == PointCell.state.ship)) {
                             x = point.x + l;
                             y = point.y + k;
+                            return;
                         }
                     }
                 }
+        x = -1;
+        y = -1;
+        //hitPoints.removeAll(hitPoints);
+    }
+    private void saveDirection()
+    {
+
     }
 
     /*public void shoot() {

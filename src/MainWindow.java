@@ -26,7 +26,7 @@ public class MainWindow extends JFrame implements ActionListener {
     MainWindow() {
         setTitle("Naval Battle");
         setSize(screenResolution.width / 2, screenResolution.height / 2);
-        setLocationRelativeTo(null);
+        //setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
         setLayout(null);

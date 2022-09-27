@@ -215,9 +215,11 @@ public class GameLogic {
                     checkLoose(ships);
                 }
             }
+            MainWindow.refFieldDrawer.repaint();
             return true;
         } else {
             field[y][x].cellState = PointCell.state.miss;
+            MainWindow.refFieldDrawer.repaint();
             return false;
         }
     }

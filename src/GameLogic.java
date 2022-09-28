@@ -7,6 +7,7 @@ Game logic
  */
 public class GameLogic {
     private static MainWindow refMainWindow;
+
     static Point setPosition(Point point, Ship ship) { //sets position of all ships
         if (ship.isHorizontal) {
             if (point.x + ship.getLength() > 10)
@@ -211,7 +212,7 @@ public class GameLogic {
             if (cShip != null) {
                 cShip.hit();
                 if (!cShip.isAlive()) {
-                    shipDraw(cShip, field);
+                    shipDraw(cShip, field, false);
                     checkLoose(ships);
                 }
             }
@@ -255,7 +256,28 @@ public class GameLogic {
                 }
             }
         }
+    }
 
+    static void shipDraw(Ship ship, PointCell[][] field, boolean player) {
+        int pX = ship.getPosition().x;
+        int pY = ship.getPosition().y;
+        if (!player)
+            AI.shipDestroyed(ship);
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= ship.getLength(); j++) {
+                if (ship.isHorizontal) {
+                    if (!((pX + j >= MainWindow.FIELD_SIZE) || (pX + j < 0) || (pY + i >= MainWindow.FIELD_SIZE) || (pY + i < 0)))
+                        if (field[pY + i][pX + j].cellState == PointCell.state.water) {
+                            field[pY + i][pX + j].cellState = PointCell.state.miss;
+                        }
+                } else {
+                    if (!((pX + i >= MainWindow.FIELD_SIZE) || (pX + i < 0) || (pY + j >= MainWindow.FIELD_SIZE) || (pY + j < 0)))
+                        if (field[pY + j][pX + i].cellState == PointCell.state.water) {
+                            field[pY + j][pX + i].cellState = PointCell.state.miss;
+                        }
+                }
+            }
+        }
     }
 
     static void checkLoose(ArrayList<Ship> ships) {
@@ -284,8 +306,7 @@ public class GameLogic {
         GameLogic.refMainWindow = refMainWindow;
     }
 
-    static void gameOver()
-    {
+    static void gameOver() {
         refMainWindow.gameOver();
     }
 }

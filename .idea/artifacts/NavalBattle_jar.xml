@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="NavalBattle:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/NavalBattle_jar</output-path>
+    <root id="archive" name="NavalBattle.jar">
+      <element id="module-output" name="NavalBattle" />
+      <element id="dir-copy" path="$PROJECT_DIR$" />
+    </root>
+  </artifact>
+</component>

@@ -55,7 +55,7 @@ public class Ship {
     }
 
     public void setInitPosition(Point position) {
-        initPosition = position;
+        initPosition = new Point(position);
     }
 
     public void setPlaced() {

@@ -48,7 +48,7 @@ public class GameLogic {
             }
     }
 
-    static PointCell currentCell(MouseEvent e, PointCell[][] field) {
+    static PointCell currentCell(MouseEvent e, PointCell[][] field) { //return current selected cell
         for (int i = 0; i < MainWindow.FIELD_SIZE; i++)
             for (int j = 0; j < MainWindow.FIELD_SIZE; j++) {
                 if (((e.getX() >= i * PointCell.cellSizeX) & (e.getX() <= i * PointCell.cellSizeX + PointCell.cellSizeX)) &
@@ -116,38 +116,10 @@ public class GameLogic {
                         field[ship.getPosition().y + j][ship.getPosition().x].setCellState(PointCell.state.water);
                 }
                 ship.getPosition().translate(curPos.x - prevPos.x, curPos.y - prevPos.y);
-                //prevPos = curPos;
             }
         }
         MainWindow.updateShipsPos(ships, field);
     }
-
-    /*static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) {
-        for (Ship ship : ships)
-            for (int i = -1; i <= 1; i++)
-                for (int j = -1; j <= ship.getLength(); j++) {
-                    int k = 0;
-                    if (ship.isHorizontal) {
-                        if ((ship.getPosition().y + i >= 0) && (ship.getPosition().y + i < 10) &&
-                                (ship.getPosition().x + j >= 0) && (ship.getPosition().x + j < 10))
-                            if (i == 0) {
-                                if (field[ship.getPosition().y + i][ship.getPosition().x + j].cellState == PointCell.state.ship)
-                                    k++;
-                                if (k > ship.getLength())
-                                    return true;
-                            }
-                        if (field[ship.getPosition().y + i][ship.getPosition().x + j].cellState == PointCell.state.ship) {
-                            return true;
-                        }
-                    } else if ((ship.getPosition().y + j >= 0) && (ship.getPosition().y + j < 10) &&
-                            (ship.getPosition().x + i >= 0) && (ship.getPosition().x + i < 10))
-                        if (field[ship.getPosition().y + j][ship.getPosition().x + i].cellState == PointCell.state.ship) {
-                            return true;
-                        }
-
-                }
-        return false;
-    }*/
     static boolean checkCollision(ArrayList<Ship> ships, PointCell[][] field) { //returns true if any ship on the field is too close to another else returns false
         int allShpLength = 0;
         int curShpLength = 0;
@@ -261,8 +233,6 @@ public class GameLogic {
     static void shipDraw(Ship ship, PointCell[][] field, boolean player) {
         int pX = ship.getPosition().x;
         int pY = ship.getPosition().y;
-        if (!player)
-            AI.shipDestroyed(ship);
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= ship.getLength(); j++) {
                 if (ship.isHorizontal) {

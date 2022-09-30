@@ -126,6 +126,7 @@ public class MainWindow extends JFrame implements ActionListener {
         poolShip = new Ship(poolShip.getLength(), turn, new Point(rndX, rndY));
         ships.add(poolShip);
         poolShip.setPlaced();
+        poolShip.setInitPosition(poolShip.getPosition());
         for (int i = 0; i < 1000; i++) {
             if (GameLogic.checkCollision(ships, field)) {
                 rndX = random.nextInt(FIELD_SIZE);
@@ -134,8 +135,10 @@ public class MainWindow extends JFrame implements ActionListener {
                 if (turn)
                     poolShip.turn();
                 poolShip.setPosition(new Point(rndX, rndY));
+                poolShip.setInitPosition(poolShip.getPosition());
                 updateShipsPos(ships, field);
             }
+            else return;
         }
     }
 
@@ -152,7 +155,7 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
     public static void removeShips(ArrayList<Ship> ships) {
-        ships.removeAll(ships);
+        ships.clear();
     }
 
     public static void fillWater(PointCell[][] field) {

@@ -7,12 +7,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class FieldDrawer extends JPanel implements MouseMotionListener, MouseListener {
-    private PointCell[][] field;
+    private final PointCell[][] field;
     private PointCell[][] hiddenField;
-    private ArrayList<Ship> ships;
+    private final ArrayList<Ship> ships;
     private Point prevPos;
-    private int drawingOffsetX = 0;
-    private int drawingOffsetY = 0;
     int debug = 0;
     boolean shipPlacement = true;
     private AI ai;
@@ -42,10 +40,10 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
-        /*if (hiddenField != null)
-            field = hiddenField;*/
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
+                int drawingOffsetX = 0;
+                int drawingOffsetY = 0;
                 switch (field[j][i].cellState) {
                     case hit -> {
                         g2.setColor(Color.LIGHT_GRAY);
@@ -55,9 +53,9 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                         g2.drawLine(PointCell.cellSizeX + PointCell.cellSizeX * i, PointCell.cellSizeX * j, PointCell.cellSizeY * i, PointCell.cellSizeY + PointCell.cellSizeX * j);
                     }
                     case miss -> {
-                        g2.setColor(new Color(80, 50, 255));
+                        g2.setColor(new Color(0, 109, 255, 255));
                         g2.fillRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
-                        g2.setColor(Color.RED);
+                        g2.setColor(new Color(255, 37, 37, 190));
                         g2.fillOval(PointCell.cellSizeX * i + PointCell.cellSizeX / 3, PointCell.cellSizeY * j + PointCell.cellSizeY / 3, PointCell.cellSizeX / 2, PointCell.cellSizeY / 2);
                     }
                     case ship -> {
@@ -69,11 +67,11 @@ public class FieldDrawer extends JPanel implements MouseMotionListener, MouseLis
                         g2.fillRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                     }
                     case water -> {
-                        g2.setColor(new Color(80, 50, 255));
+                        g2.setColor(new Color(0, 109, 255, 255));
                         g2.fillRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                     }
                     case waterSelected -> {
-                        g2.setColor(new Color(100, 100, 255));
+                        g2.setColor(new Color(100, 144, 255));
                         g2.fillRect(drawingOffsetX + PointCell.cellSizeX * i, drawingOffsetY + PointCell.cellSizeY * j, PointCell.cellSizeX, PointCell.cellSizeY);
                     }
                 }
